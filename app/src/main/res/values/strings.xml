@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Saving Finance</string>
+    <string name="login_with_facebook">Login with Facebook</string>
+    <string name="don_t_have_an_account_yet">Don’t have an account yet?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="or_continue_with">Or continue with</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="e_mail">E-mail</string>
+    <string name="finance_savings">Finance Savings</string>
+    <string name="none">none</string>
+    <string name="log_in">Log In</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="sign_up_with_facebook">Sign up with Facebook</string>
+    <string name="sign_up_with_google">Sign up with Google</string>
+    <string name="name">Name</string>
 </resources>

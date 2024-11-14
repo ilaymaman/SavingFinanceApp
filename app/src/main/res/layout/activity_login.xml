@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#222222"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <!-- Title Text -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/finance_savings"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Email Field -->
+    <EditText
+        android:inputType="textEmailAddress"
+        android:autofillHints="emailAddress"
+        android:id="@+id/emailEditText"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:hint="@string/e_mail"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAAAAA"
+        android:drawableStart="@drawable/email_icon"
+        android:drawablePadding="10dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-medium"
+        />
+
+    <!-- Password Field -->
+    <EditText
+        android:autofillHints="password"
+        android:id="@+id/passwordEditText"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:hint="@string/password"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:inputType="textPassword"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAAAAA"
+        android:drawableStart="@drawable/password_icon"
+        android:drawablePadding="10dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="sans-serif-medium"
+        />
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:text="@string/login"
+        android:textColor="#222222"
+        android:background="@drawable/login_button_background"
+        android:layout_marginBottom="24dp"
+        android:textStyle="bold"
+        />
+
+    <!-- Divider -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/or_continue_with"
+        android:textColor="#AAAAAA"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Google Login Button -->
+    <LinearLayout
+        android:id="@+id/googleLoginButton"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/social_button_background"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:contentDescription="@string/none"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_google"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_with_google"
+            android:textColor="#444444"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+
+    <!-- Facebook Login Button -->
+    <LinearLayout
+        android:id="@+id/facebookLoginButton"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/social_button_background"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_marginBottom="24dp">
+
+        <ImageView
+            android:contentDescription="@string/none"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_facebook"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_with_facebook"
+            android:textColor="#444444"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+
+    <!-- Sign Up Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/don_t_have_an_account_yet"
+        android:textColor="#AAAAAA"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/signUpText"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="@string/sign_up"
+        android:gravity="center"
+        android:textColor="#2FB6FF"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:onClick="openSignupActivity"
+        />
+
+</LinearLayout>
