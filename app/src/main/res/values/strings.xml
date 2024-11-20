@@ -15,4 +15,5 @@
     <string name="sign_up_with_facebook">Sign up with Facebook</string>
     <string name="sign_up_with_google">Sign up with Google</string>
     <string name="name">Name</string>
+    <string name="dashboard">Dashboard</string>
 </resources>

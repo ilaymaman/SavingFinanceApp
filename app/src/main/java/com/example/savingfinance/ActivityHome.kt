@@ -3,9 +3,9 @@ package com.example.savingfinance
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 
-class ActivityLogin : ComponentActivity() {
+class ActivityHome : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_home)
     }
 }

@@ -6,6 +6,6 @@ import androidx.activity.ComponentActivity
 class ActivitySignup : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signup) // Use the correct layout for this activity
+        setContentView(R.layout.activity_signup)
     }
 }

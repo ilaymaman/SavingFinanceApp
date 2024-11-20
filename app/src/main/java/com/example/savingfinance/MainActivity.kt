@@ -17,12 +17,17 @@ class MainActivity : ComponentActivity() {
     // Corrected method to open Signup Activity
     fun openSignupActivity(view: View) {
         val intent = Intent(this, ActivitySignup::class.java)
-        setContentView(R.layout.activity_signup)
+        startActivity(intent)
 
     }
 
     fun openLoginActivity(view: View) {
         val intent = Intent(this, ActivityLogin::class.java)
-        setContentView(R.layout.activity_login)
+        startActivity(intent)
+    }
+
+    fun openHomeActivity(view: View) {
+        val intent = Intent(this, ActivityHome::class.java)
+        startActivity(intent)
     }
 }
