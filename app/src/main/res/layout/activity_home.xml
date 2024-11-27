@@ -1,142 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#222222"
     android:padding="16dp">
 
-    <!-- Header -->
+    <!-- Content Layout -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
-
-        <!-- Title -->
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Dashboard"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <!-- Menu Icon -->
-        <ImageView
-            android:id="@+id/menuIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_menu"
-            android:contentDescription="Menu" />
-    </LinearLayout>
-
-    <!-- Welcome Text -->
-    <TextView
-        android:id="@+id/welcomeMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome, Ilay!"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Saving Tracker Card -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="#333333"
-        android:layout_marginBottom="16dp"
-        android:elevation="4dp">
+        android:paddingBottom="80dp"> <!-- Space for the Add button -->
 
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Dashboard"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- Menu Icon -->
+            <ImageView
+                android:id="@+id/menuIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_menu"
+                android:contentDescription="Menu" />
+        </LinearLayout>
+
+        <!-- Welcome Text -->
         <TextView
-            android:id="@+id/savingTrackerTitle"
+            android:id="@+id/welcomeMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Saving Tracker"
+            android:text="Welcome, Ilay!"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/savingAmount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="$7,500.00"
-            android:textColor="#FFAF33"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="16dp" />
 
-        <TextView
-            android:id="@+id/savingGoal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="of your $10,000 saving goal"
-            android:textColor="#AAAAAA"
-            android:textSize="14sp" />
-
-        <!-- Circular Progress -->
-        <ProgressBar
-            android:id="@+id/savingProgress"
-            style="@android:style/Widget.ProgressBar.Horizontal"
+        <!-- Saving Tracker Card -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:indeterminate="false"
-            android:max="100"
-            android:progress="75"
-            android:progressTint="#FFAF33"
-            android:backgroundTint="#555555"
-            android:layout_marginTop="16dp" />
-    </LinearLayout>
-
-    <!-- Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="16dp">
-
-        <Button
-            android:id="@+id/overviewButton"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Overview"
-            android:background="#333333"
-            android:textColor="#FFFFFF"
-            android:layout_marginEnd="8dp" />
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/edit_text_background"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp">
 
-        <Button
-            android:id="@+id/graphsButton"
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/savingTrackerTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Saving Tracker"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/savingAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$7,500.00"
+                android:textColor="#FFAF33"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/savingGoal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="of your $10,000 saving goal"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp" />
+
+            <!-- Circular Progress -->
+            <ProgressBar
+                android:id="@+id/savingProgress"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="75"
+                android:progressTint="#FFAF33"
+                android:backgroundTint="#555555"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Graphs"
-            android:background="#333333"
-            android:textColor="#FFFFFF"
-            android:layout_marginStart="8dp" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/overviewButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Overview"
+                android:background="@drawable/edit_text_background"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/graphsButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Graphs"
+                android:background="@drawable/edit_text_background"
+                android:textColor="#FFFFFF"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Add Button -->
     <ImageView
         android:id="@+id/addButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:src="@drawable/ic_add"
-        android:background="#FFAF33"
-        android:tint="#222222"
-        android:layout_gravity="center"
+        android:background="@drawable/circle_button_background"
+        android:tint="#909090"
+        android:layout_gravity="bottom|center_horizontal"
         android:padding="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:contentDescription="Add" />
 
-</LinearLayout>
+</FrameLayout>
