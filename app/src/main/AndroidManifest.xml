@@ -28,6 +28,8 @@
 
         <activity android:name=".ActivityLogin"/>
         <activity android:name=".ActivityHome"/>
+        <activity android:name=".ActivityProfile"/>
+        <activity android:name=".ActivitySettings"/>
     </application>
 
 </manifest>

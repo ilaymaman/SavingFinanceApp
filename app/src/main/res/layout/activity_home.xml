@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#222222"
@@ -32,10 +33,10 @@
                 android:textStyle="bold" />
 
             <!-- Menu Icon -->
-            <ImageView
-                android:id="@+id/menuIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+            <ImageButton
+                android:id="@+id/open_drawer_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_menu"
                 android:contentDescription="Menu" />
         </LinearLayout>
@@ -142,9 +143,34 @@
         android:layout_height="60dp"
         android:src="@drawable/ic_add"
         android:background="@drawable/circle_button_background"
-        android:tint="#909090"
         android:layout_gravity="bottom|center_horizontal"
         android:padding="8dp"
         android:layout_marginBottom="16dp"
-        android:contentDescription="Add" />
+        android:contentDescription="Add"
+        app:tint="#909090" />
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Main content -->
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Right-side Navigation View -->
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/right_nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            app:menu="@menu/right_nav_menu"
+            app:headerLayout="@layout/nav_header" />
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
 </FrameLayout>
