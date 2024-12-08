@@ -22,18 +22,22 @@
         @SuppressLint("MissingInflatedId")
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_login)
+            setContentView(R.layout.activity_login) // Start with login layout
+        }
 
-            // Initialize DrawerLayout and NavigationView
+        // Function to initialize the home layout components
+        private fun setupHomeLayout() {
+            // Initialize DrawerLayout, NavigationView, and openDrawerButton
             drawerLayout = findViewById(R.id.drawer_layout)
             navigationView = findViewById(R.id.right_nav_view)
             openDrawerButton = findViewById(R.id.open_drawer_button)
 
+            // Set up the open drawer button
             openDrawerButton.setOnClickListener {
-                drawerLayout.openDrawer(GravityCompat.END) // Open the right-side navigation drawer
+                drawerLayout.openDrawer(GravityCompat.END) // Open right-side navigation drawer
             }
 
-            // Handle NavigationView item clicks
+            // Handle navigation drawer item clicks
             navigationView.setNavigationItemSelectedListener { menuItem ->
                 handleNavigationItemClick(menuItem)
                 true
