@@ -1,6 +1,7 @@
 package com.example.savingfinance
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 
 class ActivityHome : ComponentActivity() {

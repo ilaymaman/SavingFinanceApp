@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.SavingFinance" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.SavingFinance" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme colors here -->
+    </style>
 </resources>
