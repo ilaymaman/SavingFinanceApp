@@ -32,7 +32,7 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#AAAAAA"
         android:fontFamily="sans-serif-medium"
-        android:drawableStart="@drawable/ic_user"
+        android:drawableStart="@drawable/email_icon"
         android:drawablePadding="10dp"
         android:layout_marginBottom="16dp" />
 
