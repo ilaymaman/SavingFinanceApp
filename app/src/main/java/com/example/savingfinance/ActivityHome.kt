@@ -55,8 +55,9 @@ class ActivityHome : ComponentActivity() {
                 val intent = Intent(this, ActivitySettings::class.java)
                 startActivity(intent)
             }
-            R.id.logout -> {
-                // Perform logout action
+            R.id.logoutButton -> {
+                val intent = Intent(this, ActivityLogin::class.java)
+                startActivity(intent)
             }
         }
 
