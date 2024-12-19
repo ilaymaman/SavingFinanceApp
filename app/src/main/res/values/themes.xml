@@ -2,5 +2,8 @@
 <resources>
     <style name="Theme.SavingFinance" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme colors here -->
+        <item name="colorPrimary">#F8BD00</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 </resources>
