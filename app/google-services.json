@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "903659075502",
+    "project_id": "saving-finance",
+    "storage_bucket": "saving-finance.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903659075502:android:89831cccb45ff88000ba3f",
+        "android_client_info": {
+          "package_name": "com.example.savingfinance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD-UjVKw-Af-cewqbLK3xsYIyH0sCRCI8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
