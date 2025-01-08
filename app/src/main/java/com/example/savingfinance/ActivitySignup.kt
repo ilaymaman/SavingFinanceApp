@@ -20,11 +20,11 @@
 
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_signup)
             // [START initialize_auth]
             // Initialize Firebase Auth
             auth = Firebase.auth
 
+            setContentView(R.layout.activity_signup)
             // Handle UI actions (e.g., button clicks)
             val emailInput = findViewById<EditText>(R.id.nameEditText)
             val passwordInput = findViewById<EditText>(R.id.passwordEditText)
