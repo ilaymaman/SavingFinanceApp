@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.FirebaseApp
 import kotlin.math.log
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,10 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login) // Start with login layout
+
+        FirebaseApp.initializeApp(this)
+
+        setContentView(R.layout.activity_signup) // Start with login layout
     }
 
     // Existing methods
