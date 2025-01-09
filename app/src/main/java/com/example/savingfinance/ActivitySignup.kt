@@ -23,14 +23,18 @@
             // [START initialize_auth]
             // Initialize Firebase Auth
             auth = Firebase.auth
-
+            val currentUser = auth.currentUser
+            if (currentUser != null) {
+                reload()
+            }
             setContentView(R.layout.activity_signup)
             // Handle UI actions (e.g., button clicks)
-            val emailInput = findViewById<EditText>(R.id.nameEditText)
-            val passwordInput = findViewById<EditText>(R.id.passwordEditText)
+
             val signUpButton = findViewById<Button>(R.id.signUpButton)
 
             signUpButton.setOnClickListener {
+                val emailInput = findViewById<EditText>(R.id.emailEditText)
+                val passwordInput = findViewById<EditText>(R.id.passwordEditText)
                 val email = emailInput.text.toString()
                 val password = passwordInput.text.toString()
 
@@ -42,15 +46,6 @@
             }
         }
 
-        // [START on_start_check_user]
-        public override fun onStart() {
-            super.onStart()
-            // Check if user is signed in (non-null) and update UI accordingly.
-            val currentUser = auth.currentUser
-            if (currentUser != null) {
-                reload()
-            }
-        }
         // [END on_start_check_user]
 
         private fun createAccount(email: String, password: String) {
