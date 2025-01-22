@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation(libs.material)
+    implementation(libs.firebase.firestore.ktx)
 
     // Testing
     testImplementation(libs.junit)

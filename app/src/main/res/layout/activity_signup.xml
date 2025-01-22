@@ -154,7 +154,7 @@
         android:textColor="#AAAAAA"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
+    <Button
         android:id="@+id/logInText"
         android:layout_width="48dp"
         android:layout_height="48dp"

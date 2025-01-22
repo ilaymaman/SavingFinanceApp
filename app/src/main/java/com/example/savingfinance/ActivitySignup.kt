@@ -1,16 +1,17 @@
     package com.example.savingfinance
 
     import android.app.Activity
+    import android.content.Intent
     import android.os.Bundle
     import android.util.Log
     import android.widget.Button
     import android.widget.EditText
     import android.widget.Toast
     import androidx.activity.ComponentActivity
+    import com.google.firebase.Firebase
     import com.google.firebase.auth.FirebaseAuth
     import com.google.firebase.auth.FirebaseUser
     import com.google.firebase.auth.auth
-    import com.google.firebase.Firebase
 
     class ActivitySignup : ComponentActivity() {
 
@@ -56,7 +57,7 @@
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
                         val user = auth.currentUser
-                        updateUI(user)
+                        updateUI(user) // Navigate to activity_home
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -107,6 +108,12 @@
         private fun updateUI(user: FirebaseUser?) {
             if (user != null) {
                 Toast.makeText(this, "Welcome, ${user.email}", Toast.LENGTH_SHORT).show()
+                // Navigate to activity_home
+                val username = user.email ?: "User"
+                val intent = Intent(this, ActivityHome::class.java)
+                intent.putExtra("USERNAME", username)
+                startActivity(intent)
+                finish() // Optional: Prevent going back to signup screen
             } else {
                 Toast.makeText(this, "Not signed in", Toast.LENGTH_SHORT).show()
             }

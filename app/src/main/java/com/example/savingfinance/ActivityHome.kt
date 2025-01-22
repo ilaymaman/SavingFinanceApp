@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -25,6 +26,12 @@ class ActivityHome : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setupHomeLayout()// Start with login layout
+
+        val username = intent.getStringExtra("USERNAME") ?: "User"
+
+        // Find the TextView and set the welcome message
+        val welcomeTextView = findViewById<TextView>(R.id.welcomeMessage) // Ensure this ID exists in your layout
+        welcomeTextView.text = "Welcome, $username"
     }
 
     private fun setupHomeLayout() {
