@@ -163,7 +163,6 @@
         android:textColor="#2FB6FF"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="4dp"
-        android:onClick="openLoginActivity"
         />
 
 </LinearLayout>
