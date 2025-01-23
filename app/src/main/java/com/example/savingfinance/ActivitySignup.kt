@@ -112,7 +112,7 @@
             val user = auth.currentUser!!
             user.sendEmailVerification()
                 .addOnCompleteListener(this) { task ->
-                    // Email Verification sent
+                    Toast.makeText(this, "Check your email!", Toast.LENGTH_SHORT).show()
                 }
             // [END send_email_verification]
         }
