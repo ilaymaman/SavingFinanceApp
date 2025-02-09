@@ -75,12 +75,46 @@
                             val userData = mapOf(
                                 "username" to username,
                                 "email" to email
+
                             )
                             firestore.collection("users").document(userId)
                                 .set(userData)
                                 .addOnSuccessListener {
                                     Log.d(TAG, "User data saved successfully")
-                                    updateUI(user, username)
+
+                                    val transaction = mapOf(
+                                        "amount" to 0.0,
+                                        "type" to "Initial Balance",
+                                        "timestamp" to System.currentTimeMillis()
+                                    )
+
+                                    val goal = mapOf(
+                                        "currentAmount" to 0,
+                                        "GoalAmount" to 100,
+                                        "Catagory" to "Gift",
+                                    )
+
+                                    //transactions document
+                                    firestore.collection("users").document(userId)
+                                        .collection("transactions")
+                                        .add(transaction)
+                                        .addOnSuccessListener {
+                                            Log.d(TAG, "Transactions collection created with a default entry")
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.w(TAG, "Error adding transaction", e)
+                                        }
+
+                                    //goals document
+                                    firestore.collection("users").document(userId)
+                                        .collection("goals")
+                                        .add(goal)
+                                        .addOnSuccessListener {
+                                            Log.d(TAG, "Goals collection created with a default entry")
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.w(TAG, "Error adding goal", e)
+                                        }
                                 }
                                 .addOnFailureListener { e ->
                                     Log.w(TAG, "Error saving user data", e)
@@ -90,7 +124,7 @@
                                 }
                         }
 
-                        updateUI(user, username) // Navigate to activity_home
+                        updateUI(user, username, email) // Navigate to activity_home
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -99,7 +133,7 @@
                             "Authentication failed.",
                             Toast.LENGTH_SHORT,
                         ).show()
-                        updateUI(null, username)
+                        updateUI(null, username, email)
                     }
                 }
             // [END create_user_with_email]
@@ -117,11 +151,12 @@
             // [END send_email_verification]
         }
 
-        private fun updateUI(user: FirebaseUser?, username: String) {
+        private fun updateUI(user: FirebaseUser?, username: String, email: String) {
             if (user != null) {
                 Toast.makeText(this, "Welcome, $username", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, ActivityHome::class.java)
                 intent.putExtra("USERNAME", username)
+                intent.putExtra("EMAIL", email)
                 startActivity(intent)
                 finish() // Optional: Prevent going back to signup screen
             } else {
@@ -138,18 +173,19 @@
                     .addOnSuccessListener { document ->
                         if (document != null && document.exists()) {
                             val username = document.getString("username") ?: "User"
-                            updateUI(user, username) // Pass the username to updateUI
+                            val email = document.getString("email") ?: "User"
+                            updateUI(user, username, email) // Pass the username to updateUI
                         } else {
                             Log.w(TAG, "No such document in Firestore")
-                            updateUI(user, "User") // Fallback username
+                            updateUI(user, "User", "Email") // Fallback username
                         }
                     }
                     .addOnFailureListener { e ->
                         Log.e(TAG, "Error fetching user data", e)
-                        updateUI(user, "User") // Fallback username in case of failure
+                        updateUI(user, "User", "Email") // Fallback username in case of failure
                     }
             } else {
-                updateUI(null, "")
+                updateUI(null, "", "")
             }
         }
 

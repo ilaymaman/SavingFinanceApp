@@ -32,6 +32,8 @@ class ActivityHome : ComponentActivity() {
         // Find the TextView and set the welcome message
         val welcomeTextView = findViewById<TextView>(R.id.welcomeMessage) // Ensure this ID exists in your layout
         welcomeTextView.text = "Welcome, $username"
+
+
     }
 
     private fun setupHomeLayout() {
@@ -43,6 +45,11 @@ class ActivityHome : ComponentActivity() {
         openDrawerButton.setOnClickListener {
             Log.d("MainActivity", "opendrawer button clicked")
             drawerLayout.openDrawer(GravityCompat.END)
+
+            val email = intent.getStringExtra("EMAIL")
+
+            val headerTextView = findViewById<TextView>(R.id.Header_Username)
+            headerTextView.text = "$email"
         }
 
         navigationView.setNavigationItemSelectedListener { menuItem ->

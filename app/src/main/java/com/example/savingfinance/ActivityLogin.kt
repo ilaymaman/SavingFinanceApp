@@ -69,7 +69,7 @@ class ActivityLogin : ComponentActivity() {
                         "Authentication failed.",
                         Toast.LENGTH_SHORT,
                     ).show()
-                    updateUI(null, null)
+                    updateUI(null,null,null)
                 }
             }
         // [END sign_in_with_email]
@@ -82,27 +82,29 @@ class ActivityLogin : ComponentActivity() {
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
                         val username = document.getString("username") ?: "User"
-                        updateUI(user, username)
+                        val email = document.getString("email") ?: "User"
+                        updateUI(user, username, email)
                     } else {
                         Log.w(TAG, "No such document in Firestore")
-                        updateUI(user, "User") // Fallback username
+                        updateUI(user, "User", "Email") // Fallback username
                     }
                 }
                 .addOnFailureListener { e ->
                     Log.e(TAG, "Error fetching user data", e)
-                    updateUI(user, "User") // Fallback username
+                    updateUI(user, "User", "Email") // Fallback username
                 }
         } else {
-            updateUI(null, null)
+            updateUI(null, null, null)
         }
     }
 
-    private fun updateUI(user: FirebaseUser?, username: String?) {
+    private fun updateUI(user: FirebaseUser?, username: String?, email: String?) {
         if (user != null) {
             val welcomeMessage = if (!username.isNullOrEmpty()) "Welcome, $username" else "Welcome"
             Toast.makeText(this, welcomeMessage, Toast.LENGTH_SHORT).show()
             val intent = Intent(this, ActivityHome::class.java)
             intent.putExtra("USERNAME", username ?: "User")
+            intent.putExtra("EMAIL", email ?: "User")
             startActivity(intent)
             finish() // Prevent going back to the login screen
         } else {
