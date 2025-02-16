@@ -121,21 +121,21 @@
                 android:layout_marginBottom="16dp">
 
                 <Button
-                    android:id="@+id/overviewButton"
+                    android:id="@+id/transactionsButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Overview"
+                    android:text="Transactions"
                     android:background="@drawable/edit_text_background"
                     android:textColor="#FFFFFF"
                     android:layout_marginEnd="8dp" />
 
                 <Button
-                    android:id="@+id/graphsButton"
+                    android:id="@+id/goalsButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Graphs"
+                    android:text="GOALS"
                     android:background="@drawable/edit_text_background"
                     android:textColor="#FFFFFF"
                     android:layout_marginStart="8dp" />
