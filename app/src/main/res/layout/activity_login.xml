@@ -65,7 +65,6 @@
         android:background="@drawable/login_button_background"
         android:layout_marginBottom="24dp"
         android:textStyle="bold"
-        android:onClick="openHomeActivity"
         />
 
     <!-- Divider -->

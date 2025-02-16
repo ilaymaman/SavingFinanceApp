@@ -9,15 +9,22 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.math.log
 
 class ActivityHome : ComponentActivity() {
 
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var userId: String
+    private lateinit var username: String
+    private lateinit var email: String
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
 
@@ -27,13 +34,55 @@ class ActivityHome : ComponentActivity() {
         setContentView(R.layout.activity_home)
         setupHomeLayout()// Start with login layout
 
-        val username = intent.getStringExtra("USERNAME") ?: "User"
+        firestore = FirebaseFirestore.getInstance()
+
+        username = intent.getStringExtra("USERNAME") ?: ""
+        userId = intent.getStringExtra("USER_ID") ?: "Guest"
+        email = intent.getStringExtra("EMAIL") ?: "No Email"
+
+
 
         // Find the TextView and set the welcome message
         val welcomeTextView = findViewById<TextView>(R.id.welcomeMessage) // Ensure this ID exists in your layout
         welcomeTextView.text = "Welcome, $username"
 
+        if (userId.isNotEmpty()) {
+            fetchGoals()
+        } else {
+            Toast.makeText(this, "User ID not found!", Toast.LENGTH_SHORT).show()
+        }
+    }
 
+    private fun fetchGoals() {
+        firestore.collection("users").document(userId)
+            .collection("goals")
+            .get()
+            .addOnSuccessListener { documents ->
+                val currentAmountText = StringBuilder("")
+                val goalAmountText = StringBuilder("")
+                var currentAmountNum: Int? = 0
+                var goalAmountNum: Int? = 0
+                for (document in documents) {
+                    var currentAmount = document.getDouble("currentAmount")?.toInt() ?: 0
+                    var goalAmount = document.getDouble("GoalAmount")?.toInt() ?: 0
+                    var catagory = document.getString("Catagory") ?: "Unknown"
+                    currentAmountText.append("$$currentAmount")
+                    goalAmountText.append("of your $$goalAmount $catagory saving goal")
+
+                    currentAmountNum = currentAmount
+                    goalAmountNum = goalAmount
+                }
+                findViewById<TextView>(R.id.savingAmount).text = currentAmountText.toString()
+                findViewById<TextView>(R.id.savingGoal).text = goalAmountText.toString()
+
+                if (currentAmountNum != null && goalAmountNum != null) {
+                    findViewById<ProgressBar>(R.id.savingProgress).progress = currentAmountNum
+                    findViewById<ProgressBar>(R.id.savingProgress).max = goalAmountNum
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("ActivityHome", "Error fetching goals", e)
+            }
     }
 
     private fun setupHomeLayout() {

@@ -25,7 +25,7 @@ class ActivityLogin : ComponentActivity() {
 
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            //reload()
+            reload()
         }
 
         setContentView(R.layout.activity_login)
@@ -105,6 +105,7 @@ class ActivityLogin : ComponentActivity() {
             val intent = Intent(this, ActivityHome::class.java)
             intent.putExtra("USERNAME", username ?: "User")
             intent.putExtra("EMAIL", email ?: "User")
+            intent.putExtra("USER_ID", user.uid)
             startActivity(intent)
             finish() // Prevent going back to the login screen
         } else {

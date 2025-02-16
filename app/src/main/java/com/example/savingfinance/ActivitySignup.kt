@@ -157,6 +157,7 @@
                 val intent = Intent(this, ActivityHome::class.java)
                 intent.putExtra("USERNAME", username)
                 intent.putExtra("EMAIL", email)
+                intent.putExtra("USER_ID", user.uid)
                 startActivity(intent)
                 finish() // Optional: Prevent going back to signup screen
             } else {
