@@ -2,6 +2,7 @@ package com.example.savingfinance
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -13,13 +14,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.math.log
 
-class ActivityHome : ComponentActivity() {
+class ActivityHome : AppCompatActivity() {
 
     private lateinit var firestore: FirebaseFirestore
     private lateinit var userId: String
@@ -50,6 +52,12 @@ class ActivityHome : ComponentActivity() {
             fetchGoals()
         } else {
             Toast.makeText(this, "User ID not found!", Toast.LENGTH_SHORT).show()
+        }
+
+        val AddButton = findViewById<ImageButton>(R.id.addButton)
+        AddButton.setOnClickListener {
+            val bottomSheet = AddActivityBottomSheet()
+            bottomSheet.show(supportFragmentManager, "AddActivityBottomSheet")
         }
     }
 
