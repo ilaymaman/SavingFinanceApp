@@ -141,6 +141,15 @@
                     android:layout_marginStart="8dp" />
             </LinearLayout>
 
+            <!-- Add this after the LinearLayout with buttons -->
+            <FrameLayout
+                android:id="@+id/fragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
         </LinearLayout>
 
         <!-- Add Button -->

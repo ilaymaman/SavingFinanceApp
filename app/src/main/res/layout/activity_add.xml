@@ -13,7 +13,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="#111111">
+        android:background="#1F1F1F">
 
         <!-- Title -->
         <TextView
@@ -32,7 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="12dp"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+            />
 
         <!-- Name -->
         <EditText
@@ -43,7 +44,7 @@
             android:textColorHint="#AAAAAA"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="12dp"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/edit_text_background" />
 
         <!-- Description -->
         <EditText
@@ -54,18 +55,18 @@
             android:textColorHint="#AAAAAA"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="12dp"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/edit_text_background" />
 
-        <!-- Date -->
+        <!-- Goal Amount -->
         <EditText
-            android:id="@+id/etDate"
+            android:id="@+id/etGoal"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="DD/MM/YYYY"
+            android:hint="Goal Amount"
             android:textColorHint="#AAAAAA"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/edit_text_background" />
 
         <!-- Bottom Button Row -->
         <LinearLayout
@@ -89,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:text="Add"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/login_button_background" />
+                android:background="@drawable/edit_text_background" />
         </LinearLayout>
 
     </LinearLayout>

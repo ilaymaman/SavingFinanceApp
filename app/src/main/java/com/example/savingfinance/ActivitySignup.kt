@@ -90,8 +90,9 @@
 
                                     val goal = mapOf(
                                         "currentAmount" to 0,
-                                        "GoalAmount" to 100,
-                                        "Catagory" to "Gift",
+                                        "goalAmount" to 0,
+                                        "catagory" to "None",
+                                        "name" to "Unknown"
                                     )
 
                                     //transactions document

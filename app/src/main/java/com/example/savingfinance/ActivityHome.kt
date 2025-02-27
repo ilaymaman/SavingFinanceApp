@@ -17,6 +17,7 @@ import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.math.log
@@ -58,6 +59,17 @@ class ActivityHome : AppCompatActivity() {
         AddButton.setOnClickListener {
             val bottomSheet = AddActivityBottomSheet()
             bottomSheet.show(supportFragmentManager, "AddActivityBottomSheet")
+        }
+
+        val transactionsButton = findViewById<Button>(R.id.transactionsButton)
+        val goalsButton = findViewById<Button>(R.id.goalsButton)
+
+        transactionsButton.setOnClickListener {
+            loadFragment(TransactionFragment.newInstance(userId))
+        }
+
+        goalsButton.setOnClickListener {
+            loadFragment(GoalsFragment.newInstance(userId))
         }
     }
 
@@ -134,5 +146,11 @@ class ActivityHome : AppCompatActivity() {
 
         // Close the drawer after handling the item click
         drawerLayout.closeDrawer(GravityCompat.END)
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragmentContainer, fragment)
+        transaction.commit()
     }
 }

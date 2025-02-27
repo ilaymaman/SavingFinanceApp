@@ -7,57 +7,83 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AddActivityBottomSheet : BottomSheetDialogFragment() {
 
+    private lateinit var firestore: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isCancelable = true
-        setStyle(STYLE_NO_TITLE, R.style.TransparentBottomSheetDialog)
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-
-        // Set the background of the dialog's window to transparent
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        return dialog
+        firestore = FirebaseFirestore.getInstance() // Initialize Firestore
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_add, container, false)
-    }
+        val view = inflater.inflate(R.layout.activity_add, container, false)
 
-    override fun onStart() {
-        super.onStart()
+        val categorySpinner = view.findViewById<Spinner>(R.id.spCategory)
+        val goalNameEditText = view.findViewById<EditText>(R.id.etName) // Assuming you have an EditText for goal name
+        val goalAmountEditText = view.findViewById<EditText>(R.id.etGoal) // Assuming you have an EditText for amount
+        val addButton = view.findViewById<Button>(R.id.btnAdd)
+        val cancelButton = view.findViewById<Button>(R.id.btnCancel)
 
-        val dialog = dialog as? BottomSheetDialog
-        dialog?.let {
-            // Remove dimming effect
-            it.window?.setDimAmount(0f)
+        val categories = listOf("None", "Car Budget", "Gift", "Bills", "Laptop Budget")
+        val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, categories)
+        adapter.setDropDownViewResource(R.layout.spinner_item)
+        categorySpinner.adapter = adapter
 
-            val bottomSheet = it.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let { sheet ->
-                // Set the background to transparent
-                sheet.setBackgroundColor(Color.TRANSPARENT)
+        cancelButton.setOnClickListener {
+            dismiss()
+        }
 
-                // Expand to full height
-                val behavior = BottomSheetBehavior.from(sheet)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.skipCollapsed = true
+        addButton.setOnClickListener {
+            val goalName = goalNameEditText.text.toString().trim()
+            val goalAmount = goalAmountEditText.text.toString().trim().toDoubleOrNull()
+            val selectedCategory = categorySpinner.selectedItem.toString()
+
+            if (goalName.isEmpty() || goalAmount == null) {
+                Toast.makeText(requireContext(), "Please enter valid goal details", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val goal = hashMapOf(
+                "name" to goalName,
+                "goalAmount" to goalAmount,
+                "currentAmount" to 0,
+                "category" to selectedCategory
+            )
+
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+            if (userId != null) {
+                firestore.collection("users") // Replace with your collection name
+                    .document(userId) // Replace with the actual user ID
+                    .collection("goals") // Subcollection inside the user document
+                    .add(goal)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Goal added successfully", Toast.LENGTH_SHORT).show()
+                        dismiss()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(requireContext(), "Failed to add goal: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
-    }
 
-    override fun isCancelable(): Boolean {
-        return true
+        return view
     }
 }
