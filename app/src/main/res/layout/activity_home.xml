@@ -45,6 +45,7 @@
                     android:layout_height="48dp"
                     android:src="@drawable/ic_menu"
                     android:contentDescription="Menu"
+                    android:background="@null"
                     />
             </LinearLayout>
 

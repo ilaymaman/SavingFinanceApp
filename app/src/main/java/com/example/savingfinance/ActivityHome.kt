@@ -43,7 +43,7 @@ class ActivityHome : AppCompatActivity() {
         userId = intent.getStringExtra("USER_ID") ?: "Guest"
         email = intent.getStringExtra("EMAIL") ?: "No Email"
 
-
+        loadFragment(TransactionFragment.newInstance(userId))
 
         // Find the TextView and set the welcome message
         val welcomeTextView = findViewById<TextView>(R.id.welcomeMessage) // Ensure this ID exists in your layout
@@ -141,7 +141,7 @@ class ActivityHome : AppCompatActivity() {
         drawerLayout.closeDrawer(GravityCompat.END)
     }
 
-    private fun loadFragment(fragment: Fragment) {
+        private fun loadFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
         transaction.commit()
