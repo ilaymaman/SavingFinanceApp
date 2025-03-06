@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class TransactionFragment : Fragment() {
 
@@ -64,6 +66,12 @@ class TransactionFragment : Fragment() {
         }
     }
 
+    fun getCurrentLocalDateTime(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        sdf.timeZone = TimeZone.getDefault() // Device's current timezone
+        return sdf.format(Date()) // Formats current time in local timezone
+    }
+
     // Adapter that works directly with Firestore QueryDocumentSnapshot
     inner class TransactionsAdapter(private val transactions: QuerySnapshot) :
         RecyclerView.Adapter<TransactionsAdapter.TransactionViewHolder>() {
@@ -82,18 +90,27 @@ class TransactionFragment : Fragment() {
 
         override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
             val document = transactions.documents[position]
-            val simpleDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
 
             // Extract data directly from the Firestore document
             val amount = document.getDouble("amount")?.toInt() ?: 0
-            val category = document.getString("category") ?: "Unknown"
-            val date = document.getTimestamp("date")?.toDate() ?: Date()
+            val type = document.getString("type") ?: "Unknown"
+            val timestampString = document.getString("timestamp") ?: ""
             val description = document.getString("description") ?: ""
 
-            holder.amountText.text = "$${amount}"
-            holder.categoryText.text = category
-            holder.dateText.text = simpleDateFormat.format(date)
+            // Format the stored date string to your preferred display format
+            val formattedDate = try {
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                val date = inputFormat.parse(timestampString)
+                val outputFormat = SimpleDateFormat("MMM dd, yyyy, HH:mm", Locale.getDefault())
+                outputFormat.format(date)
+            } catch (e: Exception) {
+                "Invalid date"
+            }
+
+            holder.amountText.text = "$$amount"
+            holder.categoryText.text = type
             holder.descriptionText.text = description
+            holder.dateText.text = formattedDate
         }
 
         override fun getItemCount() = transactions.size()

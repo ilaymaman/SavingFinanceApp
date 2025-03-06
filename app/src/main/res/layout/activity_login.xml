@@ -141,13 +141,14 @@
 
     <Button
         android:id="@+id/signUpText"
-        android:layout_width="48dp"
+        android:layout_width="100dp"
         android:layout_height="48dp"
         android:text="@string/sign_up"
         android:gravity="center"
         android:textColor="#2FB6FF"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="4dp"
+        android:background="@null"
         />
 
 </LinearLayout>

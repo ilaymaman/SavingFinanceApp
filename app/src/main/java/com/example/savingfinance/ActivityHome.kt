@@ -83,14 +83,7 @@ class ActivityHome : AppCompatActivity() {
                 var currentAmountNum: Int? = 0
                 var goalAmountNum: Int? = 0
                 for (document in documents) {
-                    var currentAmount = document.getDouble("currentAmount")?.toInt() ?: 0
-                    var goalAmount = document.getDouble("GoalAmount")?.toInt() ?: 0
-                    var catagory = document.getString("Catagory") ?: "Unknown"
-                    currentAmountText.append("$$currentAmount")
-                    goalAmountText.append("of your $$goalAmount $catagory saving goal")
 
-                    currentAmountNum = currentAmount
-                    goalAmountNum = goalAmount
                 }
                 findViewById<TextView>(R.id.savingAmount).text = currentAmountText.toString()
                 findViewById<TextView>(R.id.savingGoal).text = goalAmountText.toString()

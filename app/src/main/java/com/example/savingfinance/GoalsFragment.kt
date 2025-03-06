@@ -82,7 +82,7 @@ class GoalsFragment : Fragment() {
             // Extract data directly from the Firestore document
             val currentAmount = document.getDouble("currentAmount")?.toInt() ?: 0
             val goalAmount = document.getDouble("goalAmount")?.toInt() ?: 0
-            val category = document.getString("category") ?: "Unknown"
+            val category = document.getString("name") ?: "Unknown"
 
             holder.categoryText.text = category
             holder.progressText.text = "$${currentAmount} of $${goalAmount}"

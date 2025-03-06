@@ -8,7 +8,9 @@
     </style>
 
     <style name="TransparentBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="bottomSheetStyle">@style/TransparentBottomSheetStyle</item>
     </style>
@@ -16,5 +18,4 @@
     <style name="TransparentBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
     </style>
-
 </resources>
