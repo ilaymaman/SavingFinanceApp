@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation(libs.material)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.play.services.fitness)
 
     // Testing
     testImplementation(libs.junit)
