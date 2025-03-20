@@ -73,24 +73,31 @@ class ActivityHome : AppCompatActivity() {
         }
     }
 
+    fun updateMainGoalDisplay(goalName: String, currentAmount: Int, goalAmount: Int) {
+        findViewById<TextView>(R.id.savingAmount).text = "$$currentAmount"
+        findViewById<TextView>(R.id.savingGoal).text = "of your $$goalAmount saving goal"
+        findViewById<TextView>(R.id.savingTrackerTitle).text = goalName
+        
+        findViewById<ProgressBar>(R.id.savingProgress).apply {
+            max = goalAmount
+            progress = currentAmount
+        }
+    }
+
     private fun fetchGoals() {
         firestore.collection("users").document(userId)
             .collection("goals")
             .get()
             .addOnSuccessListener { documents ->
-                val currentAmountText = StringBuilder("")
-                val goalAmountText = StringBuilder("")
-                var currentAmountNum: Int? = 0
-                var goalAmountNum: Int? = 0
-                for (document in documents) {
-
-                }
-                findViewById<TextView>(R.id.savingAmount).text = currentAmountText.toString()
-                findViewById<TextView>(R.id.savingGoal).text = goalAmountText.toString()
-
-                if (currentAmountNum != null && goalAmountNum != null) {
-                    findViewById<ProgressBar>(R.id.savingProgress).progress = currentAmountNum
-                    findViewById<ProgressBar>(R.id.savingProgress).max = goalAmountNum
+                // Find the main goal
+                val mainGoal = documents.find { it.getBoolean("isMainGoal") == true }
+                
+                mainGoal?.let {
+                    val goalName = it.getString("name") ?: "Main Goal"
+                    val currentAmount = it.getDouble("currentAmount")?.toInt() ?: 0
+                    val goalAmount = it.getDouble("goalAmount")?.toInt() ?: 0
+                    
+                    updateMainGoalDisplay(goalName, currentAmount, goalAmount)
                 }
             }
             .addOnFailureListener { e ->
@@ -141,7 +148,7 @@ class ActivityHome : AppCompatActivity() {
         drawerLayout.closeDrawer(GravityCompat.END)
     }
 
-        private fun loadFragment(fragment: Fragment) {
+    private fun loadFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
         transaction.commit()

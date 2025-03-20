@@ -8,9 +8,10 @@
     android:layout_marginBottom="8dp"
     android:background="@drawable/edit_text_background">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/goalCategory"
@@ -20,18 +21,34 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_gravity="start"/>
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/deleteButton"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="Delete goal" />
 
         <ImageButton
             android:id="@+id/editButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_edit"
-            android:contentDescription="edit"
-            android:layout_marginTop="-10dp"
-            android:layout_gravity="end"
-            android:background="@null"/>
-    </FrameLayout>
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:layout_toStartOf="@id/deleteButton"
+            android:layout_centerVertical="true"
+            android:contentDescription="Edit goal" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/goalProgress"
