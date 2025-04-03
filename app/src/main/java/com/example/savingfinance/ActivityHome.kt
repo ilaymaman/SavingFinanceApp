@@ -74,13 +74,14 @@ class ActivityHome : AppCompatActivity() {
     }
 
     fun updateMainGoalDisplay(goalName: String, currentAmount: Int, goalAmount: Int) {
-        findViewById<TextView>(R.id.savingAmount).text = "$$currentAmount"
-        findViewById<TextView>(R.id.savingGoal).text = "of your $$goalAmount saving goal"
+        findViewById<TextView>(R.id.savingAmount).text = if (goalAmount > 0) "$$currentAmount" else ""
+        findViewById<TextView>(R.id.savingGoal).text = if (goalAmount > 0) "of your $$goalAmount saving goal" else ""
         findViewById<TextView>(R.id.savingTrackerTitle).text = goalName
         
         findViewById<ProgressBar>(R.id.savingProgress).apply {
-            max = goalAmount
-            progress = currentAmount
+            max = if (goalAmount > 0) goalAmount else 100
+            progress = if (goalAmount > 0) currentAmount else 0
+            visibility = if (goalAmount > 0) View.VISIBLE else View.GONE
         }
     }
 
@@ -92,16 +93,21 @@ class ActivityHome : AppCompatActivity() {
                 // Find the main goal
                 val mainGoal = documents.find { it.getBoolean("isMainGoal") == true }
                 
-                mainGoal?.let {
-                    val goalName = it.getString("name") ?: "Main Goal"
-                    val currentAmount = it.getDouble("currentAmount")?.toInt() ?: 0
-                    val goalAmount = it.getDouble("goalAmount")?.toInt() ?: 0
+                if (mainGoal != null) {
+                    val goalName = mainGoal.getString("name") ?: "Main Goal"
+                    val currentAmount = mainGoal.getDouble("currentAmount")?.toInt() ?: 0
+                    val goalAmount = mainGoal.getDouble("goalAmount")?.toInt() ?: 0
                     
                     updateMainGoalDisplay(goalName, currentAmount, goalAmount)
+                } else {
+                    // No main goal found
+                    updateMainGoalDisplay("No main goal was set yet", 0, 0)
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("ActivityHome", "Error fetching goals", e)
+                // Show default message on error
+                updateMainGoalDisplay("No main goal was set yet", 0, 0)
             }
     }
 
@@ -148,7 +154,7 @@ class ActivityHome : AppCompatActivity() {
         drawerLayout.closeDrawer(GravityCompat.END)
     }
 
-    private fun loadFragment(fragment: Fragment) {
+    fun loadFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
         transaction.commit()

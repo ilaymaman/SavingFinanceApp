@@ -1,9 +1,7 @@
 plugins {
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
-
 }
 
 android {
@@ -44,20 +42,20 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1" // Update if needed
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
 }
 
 dependencies {
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation(libs.firebase.auth.ktx)
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     //google play services
-    implementation("com.google.android.gms:play-services-base:18.5.0")
+    implementation("com.google.android.gms:play-services-base:18.3.0")
     implementation("com.google.android.gms:play-services-auth:21.3.0")
 
     // AndroidX
@@ -71,7 +69,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation(libs.material)
-    implementation(libs.firebase.firestore.ktx)
     implementation(libs.play.services.fitness)
 
     // Testing

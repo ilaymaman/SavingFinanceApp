@@ -1,16 +1,16 @@
 [versions]
-agp = "8.6.0"
-kotlin = "2.1.0"
+agp = "8.2.2"
+kotlin = "1.9.22"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
-composeBom = "2024.04.01"
-firebaseAuthKtx = "23.1.0"
+composeBom = "2024.02.00"
+firebaseAuthKtx = "22.3.1"
 material = "1.12.0"
-firebaseFirestoreKtx = "25.1.1"
+firebaseFirestoreKtx = "24.10.2"
 playServicesFitness = "21.2.0"
 
 [libraries]
@@ -37,4 +37,3 @@ play-services-fitness = { group = "com.google.android.gms", name = "play-service
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version = "4.4.0" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
