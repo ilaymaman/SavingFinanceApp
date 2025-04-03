@@ -155,24 +155,17 @@ class AddActivityBottomSheet : BottomSheetDialogFragment() {
                 .add(data)
                 .addOnSuccessListener {
                     Toast.makeText(requireContext(), "$selectedCategory added successfully", Toast.LENGTH_SHORT).show()
+                    // Refresh the appropriate fragment based on the category
+                    val activity = requireActivity() as ActivityHome
+                    when (selectedCategory) {
+                        "Transaction" -> activity.loadFragment(TransactionFragment.newInstance(userId))
+                        "Goal" -> activity.loadFragment(GoalsFragment.newInstance(userId))
+                    }
                     dismiss()
                 }
                 .addOnFailureListener { e ->
-                    Log.e(TAG, "Failed to add $selectedCategory", e)
-                    when (e) {
-                        is FirebaseFirestoreException -> {
-                            when (e.code) {
-                                FirebaseFirestoreException.Code.PERMISSION_DENIED ->
-                                    Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_LONG).show()
-                                FirebaseFirestoreException.Code.UNAVAILABLE ->
-                                    Toast.makeText(requireContext(), "Firestore unavailable", Toast.LENGTH_LONG).show()
-                                else ->
-                                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        else ->
-                            Toast.makeText(requireContext(), "Unexpected error: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
+                    Log.e("AddActivityBottomSheet", "Error adding $selectedCategory", e)
+                    Toast.makeText(requireContext(), "Failed to add $selectedCategory", Toast.LENGTH_SHORT).show()
                 }
         }
     }
