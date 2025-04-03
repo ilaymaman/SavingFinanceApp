@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -72,10 +73,8 @@ class AddActivityBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    fun getCurrentLocalDateTime(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        sdf.timeZone = TimeZone.getDefault() // Device's current timezone
-        return sdf.format(Date()) // Formats current time in local timezone
+    private fun createTimestamp(): Timestamp {
+        return Timestamp(Date())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -128,14 +127,15 @@ class AddActivityBottomSheet : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-            // Prepare data
-            val currentTimeDate: Date = Calendar.getInstance().getTime()
+            // Create a proper timestamp
+            val timestamp = createTimestamp()
 
             val data = when (selectedCategory) {
                 "Transaction" -> hashMapOf(
                     "amount" to goalAmount,
-                    "timestamp" to getCurrentLocalDateTime(),
-                    "type" to goalName
+                    "timestamp" to timestamp,
+                    "type" to goalName,
+                    "description" to ""
                 )
                 else -> hashMapOf(
                     "name" to goalName,

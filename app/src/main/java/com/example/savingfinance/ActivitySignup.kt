@@ -23,7 +23,6 @@ class ActivitySignup : ComponentActivity() {
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var progressDialog: ProgressDialog
     private lateinit var signUpButton: Button
     private val timeoutDuration = 15000L // 15 seconds timeout
     private val handler = Handler(Looper.getMainLooper())
@@ -39,12 +38,6 @@ class ActivitySignup : ComponentActivity() {
         
         // Setup UI
         setContentView(R.layout.activity_signup)
-        
-        // Setup progress dialog
-        progressDialog = ProgressDialog(this).apply {
-            setMessage("Creating account...")
-            setCancelable(false)
-        }
         
         // Check if user is already signed in
         val currentUser = auth.currentUser
@@ -83,13 +76,11 @@ class ActivitySignup : ComponentActivity() {
         if (isAuthInProgress) return
         
         isAuthInProgress = true
-        progressDialog.show()
         signUpButton.isEnabled = false
         
         // Set timeout for signup
         val timeoutRunnable = Runnable {
             if (isAuthInProgress) {
-                progressDialog.dismiss()
                 Toast.makeText(this, "Registration timed out. Please check your internet connection and try again.", Toast.LENGTH_LONG).show()
                 isAuthInProgress = false
                 signUpButton.isEnabled = true
@@ -153,19 +144,16 @@ class ActivitySignup : ComponentActivity() {
                                     .add(goal)
                                     .addOnSuccessListener {
                                         Log.d(TAG, "Goals collection created with a default entry")
-                                        progressDialog.dismiss()
                                         updateUI(user, username, email) // Navigate to activity_home
                                         isAuthInProgress = false
                                     }
                                     .addOnFailureListener { e ->
                                         Log.w(TAG, "Error adding goal", e)
-                                        progressDialog.dismiss()
                                         updateUI(user, username, email) // Continue anyway
                                         isAuthInProgress = false
                                     }
                             }
                             .addOnFailureListener { e ->
-                                progressDialog.dismiss()
                                 Log.w(TAG, "Error saving user data", e)
                                 Toast.makeText(
                                     this, "Registration successful but failed to save user data. Some features may be limited.", 
@@ -178,7 +166,6 @@ class ActivitySignup : ComponentActivity() {
                     }
                 } else {
                     // If sign in fails, display a message to the user.
-                    progressDialog.dismiss()
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
                     
                     val errorMessage = when(task.exception) {
@@ -220,14 +207,12 @@ class ActivitySignup : ComponentActivity() {
     }
 
     private fun reload() {
-        progressDialog.show()
         val user = auth.currentUser
         if (user != null) {
             // Fetch the username from Firestore
             val userId = user.uid
             firestore.collection("users").document(userId).get()
                 .addOnSuccessListener { document ->
-                    progressDialog.dismiss()
                     if (document != null && document.exists()) {
                         val username = document.getString("username") ?: "User"
                         val email = document.getString("email") ?: "User"
@@ -238,12 +223,10 @@ class ActivitySignup : ComponentActivity() {
                     }
                 }
                 .addOnFailureListener { e ->
-                    progressDialog.dismiss()
                     Log.e(TAG, "Error fetching user data", e)
                     updateUI(user, "User", "Email") // Fallback username in case of failure
                 }
         } else {
-            progressDialog.dismiss()
             updateUI(null, "", "")
         }
     }
@@ -251,9 +234,6 @@ class ActivitySignup : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
-        if (progressDialog.isShowing) {
-            progressDialog.dismiss()
-        }
     }
 
     companion object {

@@ -5,19 +5,23 @@
     android:layout_height="150dp"
     android:gravity="center"
     android:orientation="vertical"
+    android:padding="16dp"
     android:background="#1F1F1F">
 
     <ImageView
+        android:id="@+id/nav_header_image"
         android:src="@drawable/ic_user"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:contentDescription="User profile"/>
 
     <TextView
         android:id="@+id/Header_Username"
-        android:text="Your Name"
+        android:text="User"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"/>
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
 </LinearLayout>

@@ -2,25 +2,20 @@ package com.example.savingfinance
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlin.math.log
 
 class ActivityHome : AppCompatActivity() {
 
@@ -29,59 +24,185 @@ class ActivityHome : AppCompatActivity() {
     private lateinit var username: String
     private lateinit var email: String
     private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
-        setupHomeLayout()// Start with login layout
+        try {
+            // First set the content view
+            setContentView(R.layout.activity_home)
 
-        firestore = FirebaseFirestore.getInstance()
+            // Get user data from intent with defaults to prevent null crashes
+            username = intent.getStringExtra("USERNAME") ?: "User"
+            userId = intent.getStringExtra("USER_ID") ?: ""
+            email = intent.getStringExtra("EMAIL") ?: ""
 
-        username = intent.getStringExtra("USERNAME") ?: ""
-        userId = intent.getStringExtra("USER_ID") ?: "Guest"
-        email = intent.getStringExtra("EMAIL") ?: "No Email"
+            // Initialize Firebase
+            firestore = FirebaseFirestore.getInstance()
 
-        loadFragment(TransactionFragment.newInstance(userId))
+            // Setup UI components in a specific order
+            setupWelcomeMessage() // Setup welcome message first
+            setupDrawer() // Setup drawer second
+            setupButtons() // Setup buttons third
+            
+            // Only try to load fragment and fetch goals if we have a valid user ID
+            if (userId.isNotEmpty()) {
+                // First set a default display for goals
+                updateMainGoalDisplay("Loading...", 0, 0)
+                
+                // Then try to load the transactions fragment
+                loadFragment(TransactionFragment.newInstance(userId))
+                
+                // Finally fetch goals
+                fetchGoals()
+            } else {
+                Toast.makeText(this, "Missing user ID - some features may not work", Toast.LENGTH_LONG).show()
+                updateMainGoalDisplay("Please log in", 0, 0)
+            }
+        } catch (e: Exception) {
+            Log.e("ActivityHome", "Fatal error in onCreate", e)
+            Toast.makeText(this, "Failed to start the app: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
 
-        // Find the TextView and set the welcome message
-        val welcomeTextView = findViewById<TextView>(R.id.welcomeMessage) // Ensure this ID exists in your layout
-        welcomeTextView.text = "Welcome, $username"
+            // If there's a fatal error, go back to login
+            try {
+                val intent = Intent(this, ActivityLogin::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            } catch (e2: Exception) {
+                // Nothing more we can do
+            }
+        }
+    }
 
-        if (userId.isNotEmpty()) {
-            fetchGoals()
+    private fun setupDrawer() {
+        try {
+            // Initialize drawer
+            drawerLayout = findViewById(R.id.drawer_layout)
+            
+            // Set username in header
+            val headerUsernameTextView = findViewById<TextView>(R.id.Header_Username)
+            headerUsernameTextView.text = username
+            
+            // Setup menu button
+            val openDrawerButton = findViewById<ImageButton>(R.id.open_drawer_button)
+            openDrawerButton.setOnClickListener {
+                try {
+                    drawerLayout.openDrawer(GravityCompat.END)
+                } catch (e: Exception) {
+                    handleError(e, "Error opening drawer")
+                }
+            }
+
+            // Setup menu item click listeners
+            findViewById<LinearLayout>(R.id.profile_menu_item).setOnClickListener {
+                try {
+                    val intent = Intent(this, ActivityProfile::class.java)
+                    intent.putExtra("USERNAME", username)
+                    intent.putExtra("USER_ID", userId)
+                    intent.putExtra("EMAIL", email)
+                    startActivity(intent)
+                    drawerLayout.closeDrawer(GravityCompat.END)
+                } catch (e: Exception) {
+                    handleError(e, "Error navigating to profile")
+                }
+            }
+            
+            findViewById<LinearLayout>(R.id.settings_menu_item).setOnClickListener {
+                try {
+                    val intent = Intent(this, ActivitySettings::class.java)
+                    startActivity(intent)
+                    drawerLayout.closeDrawer(GravityCompat.END)
+                } catch (e: Exception) {
+                    handleError(e, "Error navigating to settings")
+                }
+            }
+            
+            findViewById<LinearLayout>(R.id.logout_menu_item).setOnClickListener {
+                try {
+                    val intent = Intent(this, ActivityLogin::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    handleError(e, "Error logging out")
+                }
+            }
+        } catch (e: Exception) {
+            handleError(e, "Error setting up drawer")
+        }
+    }
+
+    private fun setupWelcomeMessage() {
+        try {
+            val welcomeTextView = findViewById<TextView>(R.id.welcomeMessage)
+            welcomeTextView.text = "Welcome, $username"
+        } catch (e: Exception) {
+            handleError(e, "Error setting welcome message")
+        }
+    }
+
+    private fun setupButtons() {
+        try {
+            // Add button for bottom sheet
+            val addButton = findViewById<ImageButton>(R.id.addButton)
+            addButton.setOnClickListener {
+                try {
+                    val bottomSheet = AddActivityBottomSheet()
+                    bottomSheet.show(supportFragmentManager, "AddActivityBottomSheet")
+                } catch (e: Exception) {
+                    handleError(e, "Error showing bottom sheet")
+                }
+            }
+
+            // Tab buttons
+            val transactionsButton = findViewById<Button>(R.id.transactionsButton)
+            val goalsButton = findViewById<Button>(R.id.goalsButton)
+
+            transactionsButton.setOnClickListener {
+                try {
+                    loadFragment(TransactionFragment.newInstance(userId))
+                } catch (e: Exception) {
+                    handleError(e, "Error loading transactions")
+                }
+            }
+
+            goalsButton.setOnClickListener {
+                try {
+                    loadFragment(GoalsFragment.newInstance(userId))
+                } catch (e: Exception) {
+                    handleError(e, "Error loading goals")
+                }
+            }
+        } catch (e: Exception) {
+            handleError(e, "Error setting up buttons")
+        }
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.closeDrawer(GravityCompat.END)
         } else {
-            Toast.makeText(this, "User ID not found!", Toast.LENGTH_SHORT).show()
-        }
-
-        val AddButton = findViewById<ImageButton>(R.id.addButton)
-        AddButton.setOnClickListener {
-            val bottomSheet = AddActivityBottomSheet()
-            bottomSheet.show(supportFragmentManager, "AddActivityBottomSheet")
-        }
-
-        val transactionsButton = findViewById<Button>(R.id.transactionsButton)
-        val goalsButton = findViewById<Button>(R.id.goalsButton)
-
-        transactionsButton.setOnClickListener {
-            loadFragment(TransactionFragment.newInstance(userId))
-        }
-
-        goalsButton.setOnClickListener {
-            loadFragment(GoalsFragment.newInstance(userId))
+            super.onBackPressed()
         }
     }
 
     fun updateMainGoalDisplay(goalName: String, currentAmount: Int, goalAmount: Int) {
-        findViewById<TextView>(R.id.savingAmount).text = if (goalAmount > 0) "$$currentAmount" else ""
-        findViewById<TextView>(R.id.savingGoal).text = if (goalAmount > 0) "of your $$goalAmount saving goal" else ""
-        findViewById<TextView>(R.id.savingTrackerTitle).text = goalName
-        
-        findViewById<ProgressBar>(R.id.savingProgress).apply {
-            max = if (goalAmount > 0) goalAmount else 100
-            progress = if (goalAmount > 0) currentAmount else 0
-            visibility = if (goalAmount > 0) View.VISIBLE else View.GONE
+        try {
+            val savingAmountView = findViewById<TextView>(R.id.savingAmount)
+            val savingGoalView = findViewById<TextView>(R.id.savingGoal)
+            val savingTrackerTitleView = findViewById<TextView>(R.id.savingTrackerTitle)
+            val progressBarView = findViewById<ProgressBar>(R.id.savingProgress)
+            
+            savingAmountView.text = if (goalAmount > 0) "$$currentAmount" else "$0"
+            savingGoalView.text = if (goalAmount > 0) "of your $$goalAmount saving goal" else "No goal set"
+            savingTrackerTitleView.text = goalName
+            
+            progressBarView.apply {
+                max = if (goalAmount > 0) goalAmount else 100
+                progress = if (goalAmount > 0) currentAmount else 0
+                visibility = if (goalAmount > 0) View.VISIBLE else View.VISIBLE
+            }
+        } catch (e: Exception) {
+            handleError(e, "Error updating goal display")
         }
     }
 
@@ -111,52 +232,18 @@ class ActivityHome : AppCompatActivity() {
             }
     }
 
-    private fun setupHomeLayout() {
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navigationView = findViewById(R.id.right_nav_view)
-
-        // Set up navigation drawer button and listeners
-        val openDrawerButton = findViewById<ImageButton>(R.id.open_drawer_button)
-        openDrawerButton.setOnClickListener {
-            Log.d("MainActivity", "opendrawer button clicked")
-            drawerLayout.openDrawer(GravityCompat.END)
-
-            val email = intent.getStringExtra("EMAIL")
-
-            val headerTextView = findViewById<TextView>(R.id.Header_Username)
-            headerTextView.text = "$email"
-        }
-
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            handleNavigationItemClick(menuItem)
-            true
-        }
-    }
-
-    // Handle navigation drawer item clicks
-    private fun handleNavigationItemClick(menuItem: MenuItem) {
-        when (menuItem.itemId) {
-            R.id.profile -> {
-                val intent = Intent(this, ActivityProfile::class.java)
-                startActivity(intent)
-            }
-            R.id.settings -> {
-                val intent = Intent(this, ActivitySettings::class.java)
-                startActivity(intent)
-            }
-            R.id.logoutButton -> {
-                val intent = Intent(this, ActivityLogin::class.java)
-                startActivity(intent)
-            }
-        }
-
-        // Close the drawer after handling the item click
-        drawerLayout.closeDrawer(GravityCompat.END)
+    private fun handleError(error: Exception, message: String) {
+        Log.e("ActivityHome", message, error)
+        Toast.makeText(this, "Something went wrong: ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
     }
 
     fun loadFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragmentContainer, fragment)
-        transaction.commit()
+        try {
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.fragmentContainer, fragment)
+            transaction.commit()
+        } catch (e: Exception) {
+            handleError(e, "Error loading fragment")
+        }
     }
 }

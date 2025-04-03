@@ -168,12 +168,130 @@
     </FrameLayout>
 
     <!-- Right-side Navigation View -->
-    <com.google.android.material.navigation.NavigationView
+    <LinearLayout
         android:id="@+id/right_nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        app:menu="@menu/right_nav_menu"
-        app:headerLayout="@layout/nav_header" />
+        android:background="#222222"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#1F1F1F">
+
+            <ImageView
+                android:id="@+id/nav_header_image"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_user"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/Header_Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Menu Items -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Profile -->
+            <LinearLayout
+                android:id="@+id/profile_menu_item"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_user"
+                    app:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginStart="16dp" />
+            </LinearLayout>
+
+            <!-- Settings -->
+            <LinearLayout
+                android:id="@+id/settings_menu_item"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_settings"
+                    app:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Settings"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginStart="16dp" />
+            </LinearLayout>
+
+            <!-- Logout -->
+            <LinearLayout
+                android:id="@+id/logout_menu_item"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_logout"
+                    app:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Logout"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginStart="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
