@@ -20,7 +20,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add a new spending/earning"
+            android:text="Add a new Goal/Transaction"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"

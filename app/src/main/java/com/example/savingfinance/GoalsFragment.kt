@@ -49,15 +49,32 @@ class GoalsFragment : Fragment() {
             .collection("goals")
             .get()
             .addOnSuccessListener { documents ->
-                // Sort documents by currentAmount in descending order
-                val sortedDocuments = documents.documents.sortedByDescending { 
-                    it.getDouble("currentAmount") ?: 0.0 
+                if (documents.isEmpty) {
+                    // Handle empty collection
+                    val emptyView = view?.findViewById<TextView>(R.id.empty_view)
+                    emptyView?.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                    
+                    // If there are no goals, update the main goal display with default values
+                    (activity as? ActivityHome)?.updateMainGoalDisplay("No goals set yet", 0, 0)
+                } else {
+                    // Sort documents by currentAmount in descending order
+                    val sortedDocuments = documents.documents.sortedByDescending { 
+                        it.getDouble("currentAmount") ?: 0.0 
+                    }
+                    val emptyView = view?.findViewById<TextView>(R.id.empty_view)
+                    emptyView?.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    recyclerView.adapter = GoalsAdapter(sortedDocuments)
+                    updateMainGoalDisplay(documents)
                 }
-                recyclerView.adapter = GoalsAdapter(sortedDocuments)
-                updateMainGoalDisplay(documents)
             }
             .addOnFailureListener { e ->
                 Log.e("GoalsFragment", "Error fetching goals", e)
+                val emptyView = view?.findViewById<TextView>(R.id.empty_view)
+                emptyView?.visibility = View.VISIBLE
+                emptyView?.text = "Error loading goals"
+                recyclerView.visibility = View.GONE
             }
     }
 
