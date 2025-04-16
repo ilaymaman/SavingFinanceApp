@@ -94,13 +94,13 @@ class ActivityHome : AppCompatActivity() {
             }
 
             // Set click listeners for navigation items
-            val menuProfile = findViewById<TextView>(R.id.profile)
-            val menuSettings = findViewById<TextView>(R.id.settings)
-            val menuLogout = findViewById<TextView>(R.id.logoutButton)
+            val profileMenuItem = findViewById<LinearLayout>(R.id.profile_menu_item)
+            val settingsMenuItem = findViewById<LinearLayout>(R.id.settings_menu_item)
+            val logoutMenuItem = findViewById<LinearLayout>(R.id.logout_menu_item)
             
-            menuProfile.setOnClickListener {
+            profileMenuItem.setOnClickListener {
                 // Close drawer
-                drawerLayout.closeDrawer(GravityCompat.START)
+                drawerLayout.closeDrawer(GravityCompat.END)
                 
                 // Navigate to Profile activity
                 val intent = Intent(this, ActivityProfile::class.java)
@@ -110,7 +110,7 @@ class ActivityHome : AppCompatActivity() {
                 startActivity(intent)
             }
             
-            menuSettings.setOnClickListener {
+            settingsMenuItem.setOnClickListener {
                 try {
                     val intent = Intent(this, ActivitySettings::class.java)
                     startActivity(intent)
@@ -120,7 +120,7 @@ class ActivityHome : AppCompatActivity() {
                 }
             }
             
-            menuLogout.setOnClickListener {
+            logoutMenuItem.setOnClickListener {
                 try {
                     val intent = Intent(this, ActivityLogin::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

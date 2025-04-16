@@ -6,11 +6,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class ActivityProfile : AppCompatActivity() {
     
@@ -47,16 +43,13 @@ class ActivityProfile : AppCompatActivity() {
         
         // Fetch and display user statistics
         fetchUserStatistics()
-        
-        // Fetch user creation date
-        fetchUserCreationDate()
     }
     
     private fun setupUserInfo() {
         // Display username and email
         findViewById<TextView>(R.id.profileUsername).text = username
         findViewById<TextView>(R.id.profileEmail).text = email
-        findViewById<TextView>(R.id.profileUserId).text = userId
+        findViewById<TextView>(R.id.profileEmailDetail).text = email
     }
     
     private fun fetchUserStatistics() {
@@ -93,34 +86,6 @@ class ActivityProfile : AppCompatActivity() {
                 Log.e("ActivityProfile", "Error fetching goals", e)
                 Toast.makeText(this, "Error loading goals: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
-    }
-    
-    private fun fetchUserCreationDate() {
-        firestore.collection("users").document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val creationDate = document.getTimestamp("createdAt")
-                    
-                    if (creationDate != null) {
-                        val formattedDate = formatDate(creationDate.toDate())
-                        findViewById<TextView>(R.id.profileJoinDate).text = formattedDate
-                    } else {
-                        findViewById<TextView>(R.id.profileJoinDate).text = "Unknown"
-                    }
-                } else {
-                    findViewById<TextView>(R.id.profileJoinDate).text = "Unknown"
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("ActivityProfile", "Error fetching user data", e)
-                findViewById<TextView>(R.id.profileJoinDate).text = "Unknown"
-            }
-    }
-    
-    private fun formatDate(date: Date): String {
-        val format = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
-        return format.format(date)
     }
     
     override fun onBackPressed() {
