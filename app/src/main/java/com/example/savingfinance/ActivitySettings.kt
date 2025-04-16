@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 
 class ActivitySettings : AppCompatActivity() {

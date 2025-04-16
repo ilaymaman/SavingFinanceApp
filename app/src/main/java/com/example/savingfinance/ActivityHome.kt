@@ -93,21 +93,24 @@ class ActivityHome : AppCompatActivity() {
                 }
             }
 
-            // Setup menu item click listeners
-            findViewById<LinearLayout>(R.id.profile_menu_item).setOnClickListener {
-                try {
-                    val intent = Intent(this, ActivityProfile::class.java)
-                    intent.putExtra("USERNAME", username)
-                    intent.putExtra("USER_ID", userId)
-                    intent.putExtra("EMAIL", email)
-                    startActivity(intent)
-                    drawerLayout.closeDrawer(GravityCompat.END)
-                } catch (e: Exception) {
-                    handleError(e, "Error navigating to profile")
-                }
+            // Set click listeners for navigation items
+            val menuProfile = findViewById<TextView>(R.id.profile)
+            val menuSettings = findViewById<TextView>(R.id.settings)
+            val menuLogout = findViewById<TextView>(R.id.logoutButton)
+            
+            menuProfile.setOnClickListener {
+                // Close drawer
+                drawerLayout.closeDrawer(GravityCompat.START)
+                
+                // Navigate to Profile activity
+                val intent = Intent(this, ActivityProfile::class.java)
+                intent.putExtra("USER_ID", userId)
+                intent.putExtra("USERNAME", username)
+                intent.putExtra("EMAIL", email)
+                startActivity(intent)
             }
             
-            findViewById<LinearLayout>(R.id.settings_menu_item).setOnClickListener {
+            menuSettings.setOnClickListener {
                 try {
                     val intent = Intent(this, ActivitySettings::class.java)
                     startActivity(intent)
@@ -117,7 +120,7 @@ class ActivityHome : AppCompatActivity() {
                 }
             }
             
-            findViewById<LinearLayout>(R.id.logout_menu_item).setOnClickListener {
+            menuLogout.setOnClickListener {
                 try {
                     val intent = Intent(this, ActivityLogin::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

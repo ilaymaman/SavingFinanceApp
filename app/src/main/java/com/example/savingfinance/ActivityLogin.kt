@@ -51,7 +51,7 @@ class ActivityLogin : ComponentActivity() {
         // Check if user is already signed in
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            reload()
+            //reload()
         }
 
         loginButton.setOnClickListener {

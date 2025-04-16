@@ -101,39 +101,6 @@
             android:trackTint="#555555" />
     </LinearLayout>
 
-    <!-- Dark Mode -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="@drawable/edit_text_background"
-        android:layout_marginBottom="12dp"
-        android:elevation="4dp"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_change_theme"
-            android:layout_marginEnd="12dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Change Theme"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
-
-        <Switch
-            android:id="@+id/changeThemeSwitch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:thumbTint="#FFAF33"
-            android:trackTint="#555555" />
-    </LinearLayout>
-
     <!-- About -->
     <LinearLayout
         android:layout_width="match_parent"

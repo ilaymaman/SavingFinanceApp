@@ -42,7 +42,7 @@ class ActivitySignup : ComponentActivity() {
         // Check if user is already signed in
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            reload()
+            //reload()
         }
         
         // Handle UI actions (e.g., button clicks)
@@ -113,45 +113,21 @@ class ActivitySignup : ComponentActivity() {
                             .addOnSuccessListener {
                                 Log.d(TAG, "User data saved successfully")
 
-                                val transaction = mapOf(
-                                    "amount" to 0.0,
-                                    "type" to "Initial Balance",
-                                    "timestamp" to System.currentTimeMillis()
-                                )
-
-                                //transactions document
-                                firestore.collection("users").document(userId)
+                                // Create empty collections without adding default records
+                                // Create empty transactions collection reference
+                                val transactionsRef = firestore.collection("users").document(userId)
                                     .collection("transactions")
-                                    .add(transaction)
-                                    .addOnSuccessListener {
-                                        Log.d(TAG, "Transactions collection created with a default entry")
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.w(TAG, "Error adding transaction", e)
-                                    }
-
-                                //goals document
-                                val goal = mapOf(
-                                    "currentAmount" to 0,
-                                    "goalAmount" to 0,
-                                    "category" to "None",
-                                    "name" to "My First Goal",
-                                    "isMainGoal" to true
-                                )
                                 
-                                firestore.collection("users").document(userId)
+                                // Create empty goals collection reference
+                                val goalsRef = firestore.collection("users").document(userId)
                                     .collection("goals")
-                                    .add(goal)
-                                    .addOnSuccessListener {
-                                        Log.d(TAG, "Goals collection created with a default entry")
-                                        updateUI(user, username, email) // Navigate to activity_home
-                                        isAuthInProgress = false
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.w(TAG, "Error adding goal", e)
-                                        updateUI(user, username, email) // Continue anyway
-                                        isAuthInProgress = false
-                                    }
+                                
+                                // Just log that we're intentionally creating empty collections
+                                Log.d(TAG, "Creating empty transactions and goals collections")
+                                
+                                // Navigate to the home activity - no need to wait for collections
+                                updateUI(user, username, email)
+                                isAuthInProgress = false
                             }
                             .addOnFailureListener { e ->
                                 Log.w(TAG, "Error saving user data", e)
