@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -24,7 +25,7 @@
             android:padding="12dp"
             android:layout_marginEnd="8dp"
             android:contentDescription="Go back"
-            android:tint="#FFFFFF" />
+            app:tint="#FFFFFF" />
 
         <!-- Title -->
         <TextView
@@ -66,7 +67,8 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_right" />
+            android:src="@drawable/ic_arrow_right"
+            android:background="@null" />
     </LinearLayout>
 
     <!-- Currency Preference -->
@@ -103,103 +105,6 @@
             android:textColor="#FFAF33"
             android:textSize="16sp"
             android:layout_marginEnd="8dp" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_right" />
-    </LinearLayout>
-
-    <!-- Backup & Restore -->
-    <LinearLayout
-        android:id="@+id/backupRestoreLayout"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="@drawable/edit_text_background"
-        android:layout_marginBottom="12dp"
-        android:elevation="4dp"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_backup"
-            android:layout_marginEnd="12dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Backup &amp; Restore"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_right" />
-    </LinearLayout>
-
-    <!-- Notifications -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="@drawable/edit_text_background"
-        android:layout_marginBottom="12dp"
-        android:elevation="4dp"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_notification"
-            android:layout_marginEnd="12dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Notifications"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
-
-        <Switch
-            android:id="@+id/notificationsSwitch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:thumbTint="#FFAF33"
-            android:trackTint="#555555" />
-    </LinearLayout>
-
-    <!-- About -->
-    <LinearLayout
-        android:id="@+id/aboutLayout"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="@drawable/edit_text_background"
-        android:layout_marginBottom="12dp"
-        android:elevation="4dp"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_info"
-            android:layout_marginEnd="12dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="About"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
 
         <ImageView
             android:layout_width="24dp"

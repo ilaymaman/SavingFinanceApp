@@ -56,9 +56,10 @@ class ActivitySignup : ComponentActivity() {
             val username = usernameInput.text.toString().trim()
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString()
+            val preferredCurrency = "$"
 
             if (email.isNotEmpty() && password.isNotEmpty() && username.isNotEmpty()) {
-                createAccount(email, password, username)  // Call createAccount here
+                createAccount(email, password, username, preferredCurrency)  // Call createAccount here
             } else {
                 Toast.makeText(this, "All fields must be filled!", Toast.LENGTH_SHORT).show()
             }
@@ -72,7 +73,7 @@ class ActivitySignup : ComponentActivity() {
 
     // [END on_start_check_user]
 
-    private fun createAccount(email: String, password: String, username: String) {
+    private fun createAccount(email: String, password: String, username: String, preferredCurrency: String) {
         if (isAuthInProgress) return
         
         isAuthInProgress = true
@@ -106,7 +107,8 @@ class ActivitySignup : ComponentActivity() {
                         val userId = it.uid
                         val userData = mapOf(
                             "username" to username,
-                            "email" to email
+                            "email" to email,
+                            "preferredCurrency" to "$"
                         )
                         firestore.collection("users").document(userId)
                             .set(userData)
@@ -126,7 +128,7 @@ class ActivitySignup : ComponentActivity() {
                                 Log.d(TAG, "Creating empty transactions and goals collections")
                                 
                                 // Navigate to the home activity - no need to wait for collections
-                                updateUI(user, username, email)
+                                updateUI(user, username, email, preferredCurrency)
                                 isAuthInProgress = false
                             }
                             .addOnFailureListener { e ->
@@ -135,7 +137,7 @@ class ActivitySignup : ComponentActivity() {
                                     this, "Registration successful but failed to save user data. Some features may be limited.", 
                                     Toast.LENGTH_LONG
                                 ).show()
-                                updateUI(user, username, email) // Continue anyway
+                                updateUI(user, username, email, preferredCurrency) // Continue anyway
                                 isAuthInProgress = false
                                 signUpButton.isEnabled = true
                             }
@@ -168,13 +170,14 @@ class ActivitySignup : ComponentActivity() {
         // [END send_email_verification]
     }
 
-    private fun updateUI(user: FirebaseUser?, username: String, email: String) {
+    private fun updateUI(user: FirebaseUser?, username: String, email: String, preferredCurrency: String) {
         if (user != null) {
             Toast.makeText(this, "Welcome, $username", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, ActivityHome::class.java)
             intent.putExtra("USERNAME", username)
             intent.putExtra("EMAIL", email)
             intent.putExtra("USER_ID", user.uid)
+            intent.putExtra("CURRENCY", preferredCurrency)
             startActivity(intent)
             finish() // Optional: Prevent going back to signup screen
         } else {
@@ -192,18 +195,19 @@ class ActivitySignup : ComponentActivity() {
                     if (document != null && document.exists()) {
                         val username = document.getString("username") ?: "User"
                         val email = document.getString("email") ?: "User"
-                        updateUI(user, username, email) // Pass the username to updateUI
+                        val preferredCurrency = document.getString("preferredCurrency") ?: "User"
+                        updateUI(user, username, email, preferredCurrency) // Pass the username to updateUI
                     } else {
                         Log.w(TAG, "No such document in Firestore")
-                        updateUI(user, "User", "Email") // Fallback username
+                        updateUI(user, "User", "Email", "$") // Fallback username
                     }
                 }
                 .addOnFailureListener { e ->
                     Log.e(TAG, "Error fetching user data", e)
-                    updateUI(user, "User", "Email") // Fallback username in case of failure
+                    updateUI(user, "User", "Email", "$") // Fallback username in case of failure
                 }
         } else {
-            updateUI(null, "", "")
+            updateUI(null, "", "", "$")
         }
     }
     

@@ -9,6 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class ActivitySettings : AppCompatActivity() {
+
+    private lateinit var userId: String
+    private lateinit var username: String
+    private lateinit var email: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -16,19 +21,17 @@ class ActivitySettings : AppCompatActivity() {
         val logoutButton = findViewById<Button>(R.id.logoutButton)
         val backButton = findViewById<ImageButton>(R.id.backButton)
         val currencyLayout = findViewById<LinearLayout>(R.id.currencyPreferenceLayout)
-        val backupLayout = findViewById<LinearLayout>(R.id.backupRestoreLayout)
         val profileLayout = findViewById<LinearLayout>(R.id.profileLayout) // Add ID to profile layout first
-        val aboutLayout = findViewById<LinearLayout>(R.id.aboutLayout) // Add ID to about layout first
+
+        // Get data from intent
+        userId = intent.getStringExtra("USER_ID") ?: ""
+        username = intent.getStringExtra("USERNAME") ?: ""
+        email = intent.getStringExtra("EMAIL") ?: ""
 
         // Set up click listeners for settings options
         currencyLayout.setOnClickListener {
             Toast.makeText(this, "Currency settings coming soon", Toast.LENGTH_SHORT).show()
             // Future implementation: open currency selection dialog
-        }
-
-        backupLayout.setOnClickListener {
-            Toast.makeText(this, "Backup & Restore coming soon", Toast.LENGTH_SHORT).show()
-            // Future implementation: backup/restore functionality
         }
 
         // Handle back button click
@@ -40,6 +43,14 @@ class ActivitySettings : AppCompatActivity() {
             val intent = Intent(this, ActivityLogin::class.java)
             startActivity(intent)
             finishAffinity() // Close all activities in the stack
+        }
+
+        profileLayout.setOnClickListener {
+            val intent = Intent(this, ActivityProfile::class.java)
+            intent.putExtra("USER_ID", userId)
+            intent.putExtra("USERNAME", username)
+            intent.putExtra("EMAIL", email)
+            startActivity(intent)
         }
     }
 

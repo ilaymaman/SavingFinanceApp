@@ -23,6 +23,7 @@ class ActivityHome : AppCompatActivity() {
     private lateinit var userId: String
     private lateinit var username: String
     private lateinit var email: String
+    private lateinit var preferredCurrency: String
     private lateinit var drawerLayout: DrawerLayout
 
     @SuppressLint("MissingInflatedId")
@@ -36,6 +37,7 @@ class ActivityHome : AppCompatActivity() {
             username = intent.getStringExtra("USERNAME") ?: "User"
             userId = intent.getStringExtra("USER_ID") ?: ""
             email = intent.getStringExtra("EMAIL") ?: ""
+            preferredCurrency = intent.getStringExtra("CURRENCY") ?: "$"
 
             // Initialize Firebase
             firestore = FirebaseFirestore.getInstance()
@@ -113,6 +115,9 @@ class ActivityHome : AppCompatActivity() {
             settingsMenuItem.setOnClickListener {
                 try {
                     val intent = Intent(this, ActivitySettings::class.java)
+                    intent.putExtra("USER_ID", userId)
+                    intent.putExtra("USERNAME", username)
+                    intent.putExtra("EMAIL", email)
                     startActivity(intent)
                     drawerLayout.closeDrawer(GravityCompat.END)
                 } catch (e: Exception) {
@@ -195,8 +200,8 @@ class ActivityHome : AppCompatActivity() {
             val savingTrackerTitleView = findViewById<TextView>(R.id.savingTrackerTitle)
             val progressBarView = findViewById<ProgressBar>(R.id.savingProgress)
             
-            savingAmountView.text = if (goalAmount > 0) "$$currentAmount" else "$0"
-            savingGoalView.text = if (goalAmount > 0) "of your $$goalAmount saving goal" else "No goal set"
+            savingAmountView.text = if (goalAmount > 0) "$preferredCurrency$currentAmount" else "$0"
+            savingGoalView.text = if (goalAmount > 0) "of your $preferredCurrency$goalAmount saving goal" else "No goal set"
             savingTrackerTitleView.text = goalName
             
             progressBarView.apply {
