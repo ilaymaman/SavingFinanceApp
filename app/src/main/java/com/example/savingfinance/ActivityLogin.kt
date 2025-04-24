@@ -127,10 +127,11 @@ class ActivityLogin : ComponentActivity() {
                     if (document != null && document.exists()) {
                         val username = document.getString("username") ?: "User"
                         val email = document.getString("email") ?: "User"
-                        updateUI(user, username, email)
+                        val preferredCurrency = document.getString("preferredCurrency") ?: "$"
+                        updateUI(user, username, email, preferredCurrency)
                     } else {
                         Log.w(TAG, "No such document in Firestore")
-                        updateUI(user, "User", "Email")
+                        updateUI(user, "User", "Email", "$")
                     }
                     isAuthInProgress = false
                     loginButton.isEnabled = true
@@ -141,17 +142,17 @@ class ActivityLogin : ComponentActivity() {
 
                     Log.e(TAG, "Error fetching user data", e)
                     Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_SHORT).show()
-                    updateUI(user, "User", "Email")
+                    updateUI(user, "User", "Email", "$")
                     isAuthInProgress = false
                     loginButton.isEnabled = true
                 }
         } else {
-            updateUI(null, null, null)
+            updateUI(null, null, null, null)
             loginButton.isEnabled = true
         }
     }
 
-    private fun updateUI(user: FirebaseUser?, username: String?, email: String?) {
+    private fun updateUI(user: FirebaseUser?, username: String?, email: String?, preferredCurrency: String?) {
         if (user != null) {
             val welcomeMessage = if (!username.isNullOrEmpty()) "Welcome, $username" else "Welcome"
             Toast.makeText(this, welcomeMessage, Toast.LENGTH_SHORT).show()
@@ -159,6 +160,7 @@ class ActivityLogin : ComponentActivity() {
             intent.putExtra("USERNAME", username ?: "User")
             intent.putExtra("EMAIL", email ?: "User")
             intent.putExtra("USER_ID", user.uid)
+            intent.putExtra("CURRENCY", preferredCurrency ?: "$")
             startActivity(intent)
             finish()
         } else {

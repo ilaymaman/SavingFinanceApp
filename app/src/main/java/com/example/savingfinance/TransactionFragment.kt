@@ -25,6 +25,8 @@ class TransactionFragment : Fragment() {
     private lateinit var userId: String
     private lateinit var firestore: FirebaseFirestore
 
+    private var currencySymbol: String = "$"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,9 +43,39 @@ class TransactionFragment : Fragment() {
         migrateIncorrectTimestamps()
         
         // Then fetch transactions
-        fetchTransactions()
+        fetchPreferredCurrency()
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Fetch the current currency preference whenever the fragment becomes visible
+        fetchPreferredCurrency()
+    }
+
+    private fun fetchPreferredCurrency() {
+        if (userId.isEmpty()) {
+            fetchTransactions() // Proceed with default $ symbol
+            return
+        }
+
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // Get the preferred currency or use $ as default
+                    currencySymbol = document.getString("preferredCurrency") ?: "$"
+                    Log.d("TransactionFragment", "Using currency symbol: $currencySymbol")
+                }
+                // Now that we have the currency, fetch the goals
+                fetchTransactions()
+            }
+            .addOnFailureListener { e ->
+                Log.e("TransactionFragment", "Error fetching currency preference", e)
+                // Continue with default $ symbol
+                fetchTransactions()
+            }
     }
 
     private fun fetchTransactions() {
@@ -171,7 +203,7 @@ class TransactionFragment : Fragment() {
                             "Date error"
                         }
 
-                        holder.amountText.text = "$$amount"
+                        holder.amountText.text = "$currencySymbol$amount"
                         holder.categoryText.text = type
                         holder.descriptionText.text = description
                         holder.dateText.text = formattedDate
@@ -188,7 +220,7 @@ class TransactionFragment : Fragment() {
         }
         
         private fun setDefaultValues(holder: TransactionViewHolder) {
-            holder.amountText.text = "$0"
+            holder.amountText.text = "${currencySymbol}0"
             holder.categoryText.text = "Unknown"
             holder.descriptionText.text = ""
             holder.dateText.text = "Unknown date"

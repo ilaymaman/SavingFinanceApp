@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.WriteBatch
@@ -24,6 +25,8 @@ class GoalsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var userId: String
     private lateinit var firestore: FirebaseFirestore
+
+    private var currencySymbol: String = "$"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,9 +40,39 @@ class GoalsFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         userId = arguments?.getString("USER_ID") ?: ""
 
-        fetchGoals()
+        fetchPreferredCurrency()
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Fetch the current currency preference whenever the fragment becomes visible
+        fetchPreferredCurrency()
+    }
+
+    private fun fetchPreferredCurrency() {
+        if (userId.isEmpty()) {
+            fetchGoals() // Proceed with default $ symbol
+            return
+        }
+
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // Get the preferred currency or use $ as default
+                    currencySymbol = document.getString("preferredCurrency") ?: "$"
+                    Log.d("GoalsFragment", "Using currency symbol: $currencySymbol")
+                }
+                // Now that we have the currency, fetch the goals
+                fetchGoals()
+            }
+            .addOnFailureListener { e ->
+                Log.e("GoalsFragment", "Error fetching currency preference", e)
+                // Continue with default $ symbol
+                fetchGoals()
+            }
     }
 
     private fun fetchGoals() {
@@ -231,7 +264,7 @@ class GoalsFragment : Fragment() {
 
             // Add star emoji for main goal
             holder.categoryText.text = if (isMainGoal) "⭐ $category" else category
-            holder.progressText.text = "$${currentAmount} of $${goalAmount}"
+            holder.progressText.text = "$currencySymbol${currentAmount} of $currencySymbol${goalAmount}"
             holder.progressBar.max = goalAmount
             holder.progressBar.progress = currentAmount
 

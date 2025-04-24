@@ -23,8 +23,9 @@ class ActivityHome : AppCompatActivity() {
     private lateinit var userId: String
     private lateinit var username: String
     private lateinit var email: String
-    private lateinit var preferredCurrency: String
     private lateinit var drawerLayout: DrawerLayout
+
+    private var currencySymbol: String = "$"
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +38,7 @@ class ActivityHome : AppCompatActivity() {
             username = intent.getStringExtra("USERNAME") ?: "User"
             userId = intent.getStringExtra("USER_ID") ?: ""
             email = intent.getStringExtra("EMAIL") ?: ""
-            preferredCurrency = intent.getStringExtra("CURRENCY") ?: "$"
+            currencySymbol = intent.getStringExtra("CURRENCY") ?: ""
 
             // Initialize Firebase
             firestore = FirebaseFirestore.getInstance()
@@ -56,7 +57,7 @@ class ActivityHome : AppCompatActivity() {
                 loadFragment(TransactionFragment.newInstance(userId))
                 
                 // Finally fetch goals
-                fetchGoals()
+                fetchPreferredCurrency()
             } else {
                 Toast.makeText(this, "Missing user ID - some features may not work", Toast.LENGTH_LONG).show()
                 updateMainGoalDisplay("Please log in", 0, 0)
@@ -74,6 +75,12 @@ class ActivityHome : AppCompatActivity() {
                 // Nothing more we can do
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Fetch the current currency preference whenever the fragment becomes visible
+        fetchPreferredCurrency()
     }
 
     private fun setupDrawer() {
@@ -200,8 +207,8 @@ class ActivityHome : AppCompatActivity() {
             val savingTrackerTitleView = findViewById<TextView>(R.id.savingTrackerTitle)
             val progressBarView = findViewById<ProgressBar>(R.id.savingProgress)
             
-            savingAmountView.text = if (goalAmount > 0) "$preferredCurrency$currentAmount" else "$0"
-            savingGoalView.text = if (goalAmount > 0) "of your $preferredCurrency$goalAmount saving goal" else "No goal set"
+            savingAmountView.text = if (goalAmount > 0) "$currencySymbol$currentAmount" else "${currencySymbol}0"
+            savingGoalView.text = if (goalAmount > 0) "of your $currencySymbol$goalAmount saving goal" else "No goal set"
             savingTrackerTitleView.text = goalName
             
             progressBarView.apply {
@@ -212,6 +219,30 @@ class ActivityHome : AppCompatActivity() {
         } catch (e: Exception) {
             handleError(e, "Error updating goal display")
         }
+    }
+
+    private fun fetchPreferredCurrency() {
+        if (userId.isEmpty()) {
+            fetchGoals() // Proceed with default $ symbol
+            return
+        }
+
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // Get the preferred currency or use $ as default
+                    currencySymbol = document.getString("preferredCurrency") ?: "$"
+                    Log.d("GoalsFragment", "Using currency symbol: $currencySymbol")
+                }
+                // Now that we have the currency, fetch the goals
+                fetchGoals()
+            }
+            .addOnFailureListener { e ->
+                Log.e("GoalsFragment", "Error fetching currency preference", e)
+                // Continue with default $ symbol
+                fetchGoals()
+            }
     }
 
     private fun fetchGoals() {
