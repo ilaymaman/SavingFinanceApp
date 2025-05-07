@@ -126,7 +126,7 @@ class ActivitySignup : ComponentActivity() {
                                 
                                 // Just log that we're intentionally creating empty collections
                                 Log.d(TAG, "Creating empty transactions and goals collections")
-                                
+
                                 // Navigate to the home activity - no need to wait for collections
                                 updateUI(user, username, email, preferredCurrency)
                                 isAuthInProgress = false

@@ -47,15 +47,15 @@ class ActivityHome : AppCompatActivity() {
             setupWelcomeMessage() // Setup welcome message first
             setupDrawer() // Setup drawer second
             setupButtons() // Setup buttons third
-            
+
             // Only try to load fragment and fetch goals if we have a valid user ID
             if (userId.isNotEmpty()) {
                 // First set a default display for goals
                 updateMainGoalDisplay("Loading...", 0, 0)
-                
+
                 // Then try to load the transactions fragment
                 loadFragment(TransactionFragment.newInstance(userId))
-                
+
                 // Finally fetch goals
                 fetchPreferredCurrency()
             } else {
@@ -87,11 +87,11 @@ class ActivityHome : AppCompatActivity() {
         try {
             // Initialize drawer
             drawerLayout = findViewById(R.id.drawer_layout)
-            
+
             // Set username in header
             val headerUsernameTextView = findViewById<TextView>(R.id.Header_Username)
             headerUsernameTextView.text = username
-            
+
             // Setup menu button
             val openDrawerButton = findViewById<ImageButton>(R.id.open_drawer_button)
             openDrawerButton.setOnClickListener {
@@ -106,11 +106,11 @@ class ActivityHome : AppCompatActivity() {
             val profileMenuItem = findViewById<LinearLayout>(R.id.profile_menu_item)
             val settingsMenuItem = findViewById<LinearLayout>(R.id.settings_menu_item)
             val logoutMenuItem = findViewById<LinearLayout>(R.id.logout_menu_item)
-            
+
             profileMenuItem.setOnClickListener {
                 // Close drawer
                 drawerLayout.closeDrawer(GravityCompat.END)
-                
+
                 // Navigate to Profile activity
                 val intent = Intent(this, ActivityProfile::class.java)
                 intent.putExtra("USER_ID", userId)
@@ -118,7 +118,7 @@ class ActivityHome : AppCompatActivity() {
                 intent.putExtra("EMAIL", email)
                 startActivity(intent)
             }
-            
+
             settingsMenuItem.setOnClickListener {
                 try {
                     val intent = Intent(this, ActivitySettings::class.java)
@@ -131,7 +131,7 @@ class ActivityHome : AppCompatActivity() {
                     handleError(e, "Error navigating to settings")
                 }
             }
-            
+
             logoutMenuItem.setOnClickListener {
                 try {
                     val intent = Intent(this, ActivityLogin::class.java)
@@ -206,11 +206,11 @@ class ActivityHome : AppCompatActivity() {
             val savingGoalView = findViewById<TextView>(R.id.savingGoal)
             val savingTrackerTitleView = findViewById<TextView>(R.id.savingTrackerTitle)
             val progressBarView = findViewById<ProgressBar>(R.id.savingProgress)
-            
+
             savingAmountView.text = if (goalAmount > 0) "$currencySymbol$currentAmount" else "${currencySymbol}0"
             savingGoalView.text = if (goalAmount > 0) "of your $currencySymbol$goalAmount saving goal" else "No goal set"
             savingTrackerTitleView.text = goalName
-            
+
             progressBarView.apply {
                 max = if (goalAmount > 0) goalAmount else 100
                 progress = if (goalAmount > 0) currentAmount else 0
@@ -252,12 +252,12 @@ class ActivityHome : AppCompatActivity() {
             .addOnSuccessListener { documents ->
                 // Find the main goal
                 val mainGoal = documents.find { it.getBoolean("isMainGoal") == true }
-                
+
                 if (mainGoal != null) {
                     val goalName = mainGoal.getString("name") ?: "Main Goal"
                     val currentAmount = mainGoal.getDouble("currentAmount")?.toInt() ?: 0
                     val goalAmount = mainGoal.getDouble("goalAmount")?.toInt() ?: 0
-                    
+
                     updateMainGoalDisplay(goalName, currentAmount, goalAmount)
                 } else {
                     // No main goal found
