@@ -81,69 +81,6 @@
         android:background="@drawable/login_button_background"
         android:layout_marginBottom="24dp"
 />
-    <!-- Divider -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/or_continue_with"
-        android:textColor="#AAAAAA"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Google Login Button -->
-    <LinearLayout
-        android:id="@+id/googleLoginButton"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@drawable/social_button_background"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginBottom="12dp">
-
-        <ImageView
-            android:contentDescription="@string/none"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_google"
-            android:layout_marginEnd="8dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_with_google"
-            android:textColor="#444444"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-medium" />
-    </LinearLayout>
-
-    <!-- Facebook Login Button -->
-    <LinearLayout
-        android:id="@+id/facebookLoginButton"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@drawable/social_button_background"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginBottom="24dp">
-
-        <ImageView
-            android:contentDescription="@string/none"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_facebook"
-            android:layout_marginEnd="8dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_with_facebook"
-            android:textColor="#444444"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-medium" />
-    </LinearLayout>
 
     <!-- Sign Up Text -->
     <TextView
