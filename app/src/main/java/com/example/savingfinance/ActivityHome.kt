@@ -16,6 +16,10 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class ActivityHome : AppCompatActivity() {
 
@@ -44,14 +48,14 @@ class ActivityHome : AppCompatActivity() {
             setupButtons()
 
             if (userId.isNotEmpty()) {
-                updateMainGoalDisplay("Loading...", 0, 0)
+                updateMainGoalDisplay("Loading...", 0.0, 0.0)
 
                 loadFragment(TransactionFragment.newInstance(userId))
 
                 fetchPreferredCurrency()
             } else {
                 Toast.makeText(this, "Missing user ID - some features may not work", Toast.LENGTH_LONG).show()
-                updateMainGoalDisplay("Please log in", 0, 0)
+                updateMainGoalDisplay("Please log in", 0.0, 0.0)
             }
         } catch (e: Exception) {
             Log.e("ActivityHome", "Fatal error in onCreate", e)
@@ -180,20 +184,24 @@ class ActivityHome : AppCompatActivity() {
         }
     }
 
-    fun updateMainGoalDisplay(goalName: String, currentAmount: Int, goalAmount: Int) {
+    fun updateMainGoalDisplay(goalName: String, currentAmount: Double, goalAmount: Double) {
         try {
             val savingAmountView = findViewById<TextView>(R.id.savingAmount)
             val savingGoalView = findViewById<TextView>(R.id.savingGoal)
             val savingTrackerTitleView = findViewById<TextView>(R.id.savingTrackerTitle)
             val progressBarView = findViewById<ProgressBar>(R.id.savingProgress)
 
-            savingAmountView.text = if (goalAmount > 0) "$currencySymbol$currentAmount" else "${currencySymbol}0"
-            savingGoalView.text = if (goalAmount > 0) "of your $currencySymbol$goalAmount saving goal" else "No goal set"
+            // Format amounts with 2 decimal places
+            val formattedCurrentAmount = String.format("%.2f", currentAmount)
+            val formattedGoalAmount = String.format("%.2f", goalAmount)
+            
+            savingAmountView.text = if (goalAmount > 0) "$currencySymbol$formattedCurrentAmount" else "${currencySymbol}0.00"
+            savingGoalView.text = if (goalAmount > 0) "of your $currencySymbol$formattedGoalAmount saving goal" else "No goal set"
             savingTrackerTitleView.text = goalName
 
             progressBarView.apply {
-                max = if (goalAmount > 0) goalAmount else 100
-                progress = if (goalAmount > 0) currentAmount else 0
+                max = if (goalAmount > 0) (goalAmount * 100).toInt() else 100
+                progress = if (goalAmount > 0) (currentAmount * 100).toInt() else 0
                 visibility = if (goalAmount > 0) View.VISIBLE else View.VISIBLE
             }
         } catch (e: Exception) {
@@ -201,7 +209,7 @@ class ActivityHome : AppCompatActivity() {
         }
     }
 
-    private fun fetchPreferredCurrency() {
+    fun fetchPreferredCurrency() {
         if (userId.isEmpty()) {
             fetchGoals()
             return
@@ -211,13 +219,13 @@ class ActivityHome : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    currencySymbol = document.getString("preferredCurrency") ?: "$"
-                    Log.d("GoalsFragment", "Using currency symbol: $currencySymbol")
+                    val newCurrency = document.getString("preferredCurrency") ?: "$"
+                    currencySymbol = newCurrency
+                    fetchGoals()
                 }
-                fetchGoals()
             }
             .addOnFailureListener { e ->
-                Log.e("GoalsFragment", "Error fetching currency preference", e)
+                Log.e("ActivityHome", "Error fetching currency preference", e)
                 fetchGoals()
             }
     }
@@ -231,17 +239,22 @@ class ActivityHome : AppCompatActivity() {
 
                 if (mainGoal != null) {
                     val goalName = mainGoal.getString("name") ?: "Main Goal"
-                    val currentAmount = mainGoal.getDouble("currentAmount")?.toInt() ?: 0
-                    val goalAmount = mainGoal.getDouble("goalAmount")?.toInt() ?: 0
+                    val currentAmount = mainGoal.getDouble("currentAmount") ?: 0.0
+                    val goalAmount = mainGoal.getDouble("goalAmount") ?: 0.0
 
+                    Log.d("ActivityHome", "Raw goal values from Firestore:")
+                    Log.d("ActivityHome", "Current amount: $currentAmount")
+                    Log.d("ActivityHome", "Goal amount: $goalAmount")
+
+                    // Don't convert the amounts here - they should already be in the correct currency
                     updateMainGoalDisplay(goalName, currentAmount, goalAmount)
                 } else {
-                    updateMainGoalDisplay("No main goal was set yet", 0, 0)
+                    updateMainGoalDisplay("No main goal was set yet", 0.0, 0.0)
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("ActivityHome", "Error fetching goals", e)
-                updateMainGoalDisplay("No main goal was set yet", 0, 0)
+                updateMainGoalDisplay("No main goal was set yet", 0.0, 0.0)
             }
     }
 

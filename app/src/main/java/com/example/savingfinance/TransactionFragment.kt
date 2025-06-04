@@ -135,7 +135,7 @@ class TransactionFragment : Fragment() {
                 if (position >= 0 && position < transactions.documents.size) {
                     val document = transactions.documents[position]
                     if (document != null) {
-                        val amount = document.getDouble("amount")?.toInt() ?: 0
+                        val amount = document.getDouble("amount") ?: 0.0
                         val type = document.getString("type") ?: "Unknown"
                         val description = document.getString("description") ?: ""
 
@@ -183,7 +183,9 @@ class TransactionFragment : Fragment() {
                             "Date error"
                         }
 
-                        holder.amountText.text = "$currencySymbol$amount"
+                        // Format amount with 2 decimal places
+                        val formattedAmount = String.format("%.2f", amount)
+                        holder.amountText.text = "$currencySymbol$formattedAmount"
                         holder.categoryText.text = type
                         holder.descriptionText.text = description
                         holder.dateText.text = formattedDate
@@ -200,7 +202,7 @@ class TransactionFragment : Fragment() {
         }
         
         private fun setDefaultValues(holder: TransactionViewHolder) {
-            holder.amountText.text = "${currencySymbol}0"
+            holder.amountText.text = "${currencySymbol}0.00"
             holder.categoryText.text = "Unknown"
             holder.descriptionText.text = ""
             holder.dateText.text = "Unknown date"

@@ -83,7 +83,7 @@ class GoalsFragment : Fragment() {
                     emptyView?.visibility = View.VISIBLE
                     recyclerView.visibility = View.GONE
 
-                    (activity as? ActivityHome)?.updateMainGoalDisplay("No goals set yet", 0, 0)
+                    (activity as? ActivityHome)?.updateMainGoalDisplay("No goals set yet", 0.0, 0.0)
                 } else {
                     val sortedDocuments = documents.documents.sortedByDescending { 
                         it.getDouble("currentAmount") ?: 0.0 
@@ -108,14 +108,16 @@ class GoalsFragment : Fragment() {
         val mainGoal = documents.find { it.getBoolean("isMainGoal") == true }
         mainGoal?.let {
             val goalName = it.getString("name") ?: "Main Goal"
-            val currentAmount = it.getDouble("currentAmount")?.toInt() ?: 0
-            val goalAmount = it.getDouble("goalAmount")?.toInt() ?: 0
+            val currentAmount = it.getDouble("currentAmount") ?: 0.0
+            val goalAmount = it.getDouble("goalAmount") ?: 0.0
             
             (activity as? ActivityHome)?.updateMainGoalDisplay(goalName, currentAmount, goalAmount)
+        } ?: run {
+            (activity as? ActivityHome)?.updateMainGoalDisplay("No goals set yet", 0.0, 0.0)
         }
     }
 
-    private fun showEditGoalDialog(goalId: String, currentName: String, currentAmount: Int, currentProgress: Int, isMainGoal: Boolean) {
+    private fun showEditGoalDialog(goalId: String, currentName: String, currentAmount: Double, currentProgress: Double, isMainGoal: Boolean) {
         val dialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.bottom_sheet_edit_goal, null)
 
@@ -132,8 +134,8 @@ class GoalsFragment : Fragment() {
 
         saveButton.setOnClickListener {
             val newName = nameInput.text.toString()
-            val newAmount = amountInput.text.toString().toIntOrNull() ?: currentAmount
-            val newProgress = progressInput.text.toString().toIntOrNull() ?: currentProgress
+            val newAmount = amountInput.text.toString().toDoubleOrNull() ?: currentAmount
+            val newProgress = progressInput.text.toString().toDoubleOrNull() ?: currentProgress
             val isMain = mainGoalSwitch.isChecked
 
             if (isMain) {
@@ -149,7 +151,7 @@ class GoalsFragment : Fragment() {
         dialog.show()
     }
     
-    private fun updateMainGoalInFirestore(goalId: String, name: String, amount: Int, progress: Int) {
+    private fun updateMainGoalInFirestore(goalId: String, name: String, amount: Double, progress: Double) {
         val batch = firestore.batch()
         val userGoalsRef = firestore.collection("users").document(userId).collection("goals")
 
@@ -178,7 +180,7 @@ class GoalsFragment : Fragment() {
         }
     }
     
-    private fun updateGoalInFirestore(goalId: String, name: String, amount: Int, progress: Int, isMain: Boolean) {
+    private fun updateGoalInFirestore(goalId: String, name: String, amount: Double, progress: Double, isMain: Boolean) {
         firestore.collection("users").document(userId)
             .collection("goals").document(goalId)
             .update(mapOf(
@@ -241,15 +243,20 @@ class GoalsFragment : Fragment() {
             val document = goals[position]
             val goalId = document.id
 
-            val currentAmount = document.getDouble("currentAmount")?.toInt() ?: 0
-            val goalAmount = document.getDouble("goalAmount")?.toInt() ?: 0
+            val currentAmount = document.getDouble("currentAmount") ?: 0.0
+            val goalAmount = document.getDouble("goalAmount") ?: 0.0
             val category = document.getString("name") ?: "Unknown"
             val isMainGoal = document.getBoolean("isMainGoal") ?: false
 
             holder.categoryText.text = if (isMainGoal) "⭐ $category" else category
-            holder.progressText.text = "$currencySymbol${currentAmount} of $currencySymbol${goalAmount}"
-            holder.progressBar.max = goalAmount
-            holder.progressBar.progress = currentAmount
+            
+            // Format amounts with 2 decimal places
+            val formattedCurrentAmount = String.format("%.2f", currentAmount)
+            val formattedGoalAmount = String.format("%.2f", goalAmount)
+            holder.progressText.text = "$currencySymbol$formattedCurrentAmount of $currencySymbol$formattedGoalAmount"
+            
+            holder.progressBar.max = goalAmount.toInt()
+            holder.progressBar.progress = currentAmount.toInt()
 
             holder.editButton.setOnClickListener {
                 showEditGoalDialog(goalId, category, goalAmount, currentAmount, isMainGoal)

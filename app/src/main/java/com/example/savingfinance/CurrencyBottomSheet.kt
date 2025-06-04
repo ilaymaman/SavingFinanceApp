@@ -16,6 +16,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.tasks.await
 
 class CurrencyBottomSheet(private val userId: String, private val onCurrencySelected: (String, String) -> Unit) : BottomSheetDialogFragment() {
 
@@ -23,6 +29,7 @@ class CurrencyBottomSheet(private val userId: String, private val onCurrencySele
     private lateinit var auth: FirebaseAuth
     private var selectedCurrencySymbol = "$"
     private var selectedCurrencyCode = "USD"
+    private var previousCurrencyCode = "USD"
 
     companion object {
         private const val TAG = "CurrencyBottomSheet"
@@ -68,6 +75,22 @@ class CurrencyBottomSheet(private val userId: String, private val onCurrencySele
         val currencySpinner = view.findViewById<Spinner>(R.id.spCategory)
         val saveButton = view.findViewById<Button>(R.id.saveCurrencyButton)
 
+        // Fetch current currency preference
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val currentCurrency = document.getString("preferredCurrency") ?: "$"
+                    previousCurrencyCode = if (currentCurrency == "$") "USD" else "NIS"
+                    selectedCurrencyCode = previousCurrencyCode
+                    selectedCurrencySymbol = currentCurrency
+                    
+                    // Set spinner to current selection
+                    val position = if (currentCurrency == "$") 0 else 1
+                    currencySpinner.setSelection(position)
+                }
+            }
+
         val currencies = listOf("$ USD", "₪ NIS")
         val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, currencies)
         adapter.setDropDownViewResource(R.layout.spinner_item)
@@ -92,9 +115,87 @@ class CurrencyBottomSheet(private val userId: String, private val onCurrencySele
 
         saveButton.setOnClickListener {
             if (userId.isNotEmpty()) {
-                updateUserCurrency(selectedCurrencySymbol)
+                if (selectedCurrencyCode != previousCurrencyCode) {
+                    convertAndUpdateCurrency()
+                } else {
+                    updateUserCurrency(selectedCurrencySymbol)
+                }
             } else {
                 Toast.makeText(requireContext(), "User ID not available", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun convertAndUpdateCurrency() {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                Log.d(TAG, "Starting currency conversion from $previousCurrencyCode to $selectedCurrencyCode")
+                
+                // Convert all transactions
+                val transactionsRef = firestore.collection("users").document(userId).collection("transactions")
+                val transactions = transactionsRef.get().await()
+                Log.d(TAG, "Found ${transactions.size()} transactions to convert")
+                
+                val batch = firestore.batch()
+                for (transaction in transactions) {
+                    val amount = transaction.getDouble("amount") ?: 0.0
+                    Log.d(TAG, "Original amount in Firestore: $amount")
+                    Log.d(TAG, "Converting from $previousCurrencyCode to $selectedCurrencyCode")
+                    val convertedAmount = CurrencyConverter.convertAmount(amount, previousCurrencyCode, selectedCurrencyCode)
+                    Log.d(TAG, "Final amount to be stored: $convertedAmount")
+                    batch.update(transaction.reference, "amount", convertedAmount)
+                }
+
+                // Convert all goals
+                val goalsRef = firestore.collection("users").document(userId).collection("goals")
+                val goals = goalsRef.get().await()
+                Log.d(TAG, "Found ${goals.size()} goals to convert")
+                
+                for (goal in goals) {
+                    val currentAmount = goal.getDouble("currentAmount") ?: 0.0
+                    val goalAmount = goal.getDouble("goalAmount") ?: 0.0
+                    
+                    Log.d(TAG, "Original goal amounts in Firestore:")
+                    Log.d(TAG, "Current amount: $currentAmount")
+                    Log.d(TAG, "Goal amount: $goalAmount")
+                    
+                    val convertedCurrentAmount = CurrencyConverter.convertAmount(currentAmount, previousCurrencyCode, selectedCurrencyCode)
+                    val convertedGoalAmount = CurrencyConverter.convertAmount(goalAmount, previousCurrencyCode, selectedCurrencyCode)
+                    
+                    Log.d(TAG, "Converted amounts to be stored:")
+                    Log.d(TAG, "Current amount: $convertedCurrentAmount")
+                    Log.d(TAG, "Goal amount: $convertedGoalAmount")
+                    
+                    batch.update(goal.reference, mapOf(
+                        "currentAmount" to convertedCurrentAmount,
+                        "goalAmount" to convertedGoalAmount
+                    ))
+                }
+
+                // Update user's preferred currency
+                batch.update(firestore.collection("users").document(userId), "preferredCurrency", selectedCurrencySymbol)
+                
+                // Commit all changes
+                batch.commit().await()
+                
+                // Wait a moment to ensure Firestore has processed the changes
+                delay(1000)
+                
+                // Force refresh the UI by reloading the current fragment
+                val currentFragment = (activity as? ActivityHome)?.supportFragmentManager?.fragments?.firstOrNull()
+                if (currentFragment is TransactionFragment) {
+                    (activity as? ActivityHome)?.loadFragment(TransactionFragment.newInstance(userId))
+                } else if (currentFragment is GoalsFragment) {
+                    (activity as? ActivityHome)?.loadFragment(GoalsFragment.newInstance(userId))
+                }
+                
+                Log.d(TAG, "Currency conversion completed successfully")
+                Toast.makeText(requireContext(), "Currency updated successfully", Toast.LENGTH_SHORT).show()
+                onCurrencySelected(selectedCurrencySymbol, selectedCurrencyCode)
+                dismiss()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error converting currency", e)
+                Toast.makeText(requireContext(), "Failed to update currency: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
