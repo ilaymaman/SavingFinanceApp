@@ -32,30 +32,26 @@ class ActivitySettings : AppCompatActivity() {
         val profileLayout = findViewById<LinearLayout>(R.id.profileLayout)
         currencyValueText = findViewById(R.id.currencyValue)
 
-        // Get data from intent
         userId = intent.getStringExtra("USER_ID") ?: ""
         username = intent.getStringExtra("USERNAME") ?: ""
         email = intent.getStringExtra("EMAIL") ?: ""
 
-        // Get the user's current currency
         if (userId.isNotEmpty()) {
             fetchUserCurrency()
         }
 
-        // Set up click listeners for settings options
         currencyLayout.setOnClickListener {
             showCurrencySelector()
         }
 
-        // Handle back button click
         backButton.setOnClickListener {
-            returnToPreviousScreen() // Use the same method for consistency
+            returnToPreviousScreen()
         }
 
         logoutButton.setOnClickListener {
             val intent = Intent(this, ActivityLogin::class.java)
             startActivity(intent)
-            finishAffinity() // Close all activities in the stack
+            finishAffinity()
         }
 
         profileLayout.setOnClickListener {
@@ -96,14 +92,12 @@ class ActivitySettings : AppCompatActivity() {
         bottomSheet.show(supportFragmentManager, "CurrencyBottomSheet")
     }
 
-    // Also handle the system back button
     override fun onBackPressed() {
         super.onBackPressed()
         returnToPreviousScreen()
     }
 
     private fun returnToPreviousScreen() {
-        // Pass the currency back to the previous activity
         val resultIntent = Intent()
         resultIntent.putExtra("CURRENCY_SYMBOL", currentCurrencySymbol)
         resultIntent.putExtra("CURRENCY_CODE", currentCurrencyCode)

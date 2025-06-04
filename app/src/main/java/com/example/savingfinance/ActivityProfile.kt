@@ -18,11 +18,9 @@ class ActivityProfile : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-        
-        // Initialize Firestore
+
         firestore = FirebaseFirestore.getInstance()
-        
-        // Get data from intent
+
         userId = intent.getStringExtra("USER_ID") ?: ""
         username = intent.getStringExtra("USERNAME") ?: ""
         email = intent.getStringExtra("EMAIL") ?: ""
@@ -32,31 +30,25 @@ class ActivityProfile : AppCompatActivity() {
             finish()
             return
         }
-        
-        // Setup back button
+
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
             finish()
         }
-        
-        // Set user information
+
         setupUserInfo()
-        
-        // Fetch and display user statistics
+
         fetchUserStatistics()
     }
     
     private fun setupUserInfo() {
-        // Display username and email
         findViewById<TextView>(R.id.profileUsername).text = username
         findViewById<TextView>(R.id.profileEmail).text = email
         findViewById<TextView>(R.id.profileEmailDetail).text = email
     }
     
     private fun fetchUserStatistics() {
-        // Fetch transaction count
         fetchTransactionCount()
-        
-        // Fetch goal count
+
         fetchGoalCount()
     }
     

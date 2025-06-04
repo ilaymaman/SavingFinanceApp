@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:text="Add"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/edit_text_background" />
+                android:background="@android:color/transparent"/>
         </LinearLayout>
 
     </LinearLayout>

@@ -31,32 +31,23 @@ class ActivityHome : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            // First set the content view
             setContentView(R.layout.activity_home)
-
-            // Get user data from intent with defaults to prevent null crashes
             username = intent.getStringExtra("USERNAME") ?: "User"
             userId = intent.getStringExtra("USER_ID") ?: ""
             email = intent.getStringExtra("EMAIL") ?: ""
             currencySymbol = intent.getStringExtra("CURRENCY") ?: ""
 
-            // Initialize Firebase
             firestore = FirebaseFirestore.getInstance()
 
-            // Setup UI components in a specific order
-            setupWelcomeMessage() // Setup welcome message first
-            setupDrawer() // Setup drawer second
-            setupButtons() // Setup buttons third
+            setupWelcomeMessage()
+            setupDrawer()
+            setupButtons()
 
-            // Only try to load fragment and fetch goals if we have a valid user ID
             if (userId.isNotEmpty()) {
-                // First set a default display for goals
                 updateMainGoalDisplay("Loading...", 0, 0)
 
-                // Then try to load the transactions fragment
                 loadFragment(TransactionFragment.newInstance(userId))
 
-                // Finally fetch goals
                 fetchPreferredCurrency()
             } else {
                 Toast.makeText(this, "Missing user ID - some features may not work", Toast.LENGTH_LONG).show()
@@ -66,33 +57,27 @@ class ActivityHome : AppCompatActivity() {
             Log.e("ActivityHome", "Fatal error in onCreate", e)
             Toast.makeText(this, "Failed to start the app: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
 
-            // If there's a fatal error, go back to login
             try {
                 val intent = Intent(this, ActivityLogin::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             } catch (e2: Exception) {
-                // Nothing more we can do
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        // Fetch the current currency preference whenever the fragment becomes visible
         fetchPreferredCurrency()
     }
 
     private fun setupDrawer() {
         try {
-            // Initialize drawer
             drawerLayout = findViewById(R.id.drawer_layout)
 
-            // Set username in header
             val headerUsernameTextView = findViewById<TextView>(R.id.Header_Username)
             headerUsernameTextView.text = username
 
-            // Setup menu button
             val openDrawerButton = findViewById<ImageButton>(R.id.open_drawer_button)
             openDrawerButton.setOnClickListener {
                 try {
@@ -102,16 +87,13 @@ class ActivityHome : AppCompatActivity() {
                 }
             }
 
-            // Set click listeners for navigation items
             val profileMenuItem = findViewById<LinearLayout>(R.id.profile_menu_item)
             val settingsMenuItem = findViewById<LinearLayout>(R.id.settings_menu_item)
             val logoutMenuItem = findViewById<LinearLayout>(R.id.logout_menu_item)
 
             profileMenuItem.setOnClickListener {
-                // Close drawer
                 drawerLayout.closeDrawer(GravityCompat.END)
 
-                // Navigate to Profile activity
                 val intent = Intent(this, ActivityProfile::class.java)
                 intent.putExtra("USER_ID", userId)
                 intent.putExtra("USERNAME", username)
@@ -157,7 +139,6 @@ class ActivityHome : AppCompatActivity() {
 
     private fun setupButtons() {
         try {
-            // Add button for bottom sheet
             val addButton = findViewById<ImageButton>(R.id.addButton)
             addButton.setOnClickListener {
                 try {
@@ -168,7 +149,6 @@ class ActivityHome : AppCompatActivity() {
                 }
             }
 
-            // Tab buttons
             val transactionsButton = findViewById<Button>(R.id.transactionsButton)
             val goalsButton = findViewById<Button>(R.id.goalsButton)
 
@@ -223,7 +203,7 @@ class ActivityHome : AppCompatActivity() {
 
     private fun fetchPreferredCurrency() {
         if (userId.isEmpty()) {
-            fetchGoals() // Proceed with default $ symbol
+            fetchGoals()
             return
         }
 
@@ -231,16 +211,13 @@ class ActivityHome : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    // Get the preferred currency or use $ as default
                     currencySymbol = document.getString("preferredCurrency") ?: "$"
                     Log.d("GoalsFragment", "Using currency symbol: $currencySymbol")
                 }
-                // Now that we have the currency, fetch the goals
                 fetchGoals()
             }
             .addOnFailureListener { e ->
                 Log.e("GoalsFragment", "Error fetching currency preference", e)
-                // Continue with default $ symbol
                 fetchGoals()
             }
     }
@@ -250,7 +227,6 @@ class ActivityHome : AppCompatActivity() {
             .collection("goals")
             .get()
             .addOnSuccessListener { documents ->
-                // Find the main goal
                 val mainGoal = documents.find { it.getBoolean("isMainGoal") == true }
 
                 if (mainGoal != null) {
@@ -260,13 +236,11 @@ class ActivityHome : AppCompatActivity() {
 
                     updateMainGoalDisplay(goalName, currentAmount, goalAmount)
                 } else {
-                    // No main goal found
                     updateMainGoalDisplay("No main goal was set yet", 0, 0)
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("ActivityHome", "Error fetching goals", e)
-                // Show default message on error
                 updateMainGoalDisplay("No main goal was set yet", 0, 0)
             }
     }

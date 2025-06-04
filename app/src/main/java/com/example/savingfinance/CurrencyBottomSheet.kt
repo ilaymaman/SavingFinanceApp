@@ -68,13 +68,11 @@ class CurrencyBottomSheet(private val userId: String, private val onCurrencySele
         val currencySpinner = view.findViewById<Spinner>(R.id.spCategory)
         val saveButton = view.findViewById<Button>(R.id.saveCurrencyButton)
 
-        // Only include USD and NIS as options
         val currencies = listOf("$ USD", "₪ NIS")
         val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, currencies)
         adapter.setDropDownViewResource(R.layout.spinner_item)
         currencySpinner.adapter = adapter
 
-        // Currency selection listener
         currencySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 when (position) {

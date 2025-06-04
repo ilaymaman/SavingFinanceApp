@@ -31,28 +31,18 @@ class ActivityLogin : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var loginButton: Button
-    private val timeoutDuration = 15000L // 15 seconds timeout
+    private val timeoutDuration = 15000L
     private val handler = Handler(Looper.getMainLooper())
     private var isAuthInProgress = false
-    private var showLoadingDialog = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Initialize Firebase instances
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-        
-        // Setup UI
+
         setContentView(R.layout.activity_login)
         loginButton = findViewById(R.id.loginButton)
         val signupButton = findViewById<Button>(R.id.signUpText)
-        
-        // Check if user is already signed in
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            //reload()
-        }
 
         loginButton.setOnClickListener {
             val emailInput = findViewById<EditText>(R.id.emailEditText)
@@ -78,8 +68,7 @@ class ActivityLogin : ComponentActivity() {
         
         isAuthInProgress = true
         loginButton.isEnabled = false
-        
-        // Set timeout for login
+
         val timeoutRunnable = Runnable {
             if (isAuthInProgress) {
                 Toast.makeText(this, "Login timed out. Please check your internet connection and try again.", Toast.LENGTH_LONG).show()
@@ -165,12 +154,6 @@ class ActivityLogin : ComponentActivity() {
             finish()
         } else {
             Toast.makeText(this, "Not signed in", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun reload() {
-        auth.currentUser?.reload()?.addOnCompleteListener {
-            fetchUsernameAndUpdateUI(auth.currentUser)
         }
     }
 

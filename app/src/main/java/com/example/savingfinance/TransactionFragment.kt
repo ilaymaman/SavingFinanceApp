@@ -39,10 +39,8 @@ class TransactionFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         userId = arguments?.getString("USER_ID") ?: ""
 
-        // First try to migrate any incorrect timestamps
         migrateIncorrectTimestamps()
-        
-        // Then fetch transactions
+
         fetchPreferredCurrency()
 
         return view
@@ -50,13 +48,12 @@ class TransactionFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Fetch the current currency preference whenever the fragment becomes visible
         fetchPreferredCurrency()
     }
 
     private fun fetchPreferredCurrency() {
         if (userId.isEmpty()) {
-            fetchTransactions() // Proceed with default $ symbol
+            fetchTransactions()
             return
         }
 
@@ -64,16 +61,16 @@ class TransactionFragment : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    // Get the preferred currency or use $ as default
+
                     currencySymbol = document.getString("preferredCurrency") ?: "$"
                     Log.d("TransactionFragment", "Using currency symbol: $currencySymbol")
                 }
-                // Now that we have the currency, fetch the goals
+
                 fetchTransactions()
             }
             .addOnFailureListener { e ->
                 Log.e("TransactionFragment", "Error fetching currency preference", e)
-                // Continue with default $ symbol
+
                 fetchTransactions()
             }
     }
@@ -86,12 +83,12 @@ class TransactionFragment : Fragment() {
             .get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
-                    // Handle empty collection
+
                     val emptyView = view?.findViewById<TextView>(R.id.empty_view)
                     emptyView?.visibility = View.VISIBLE
                     recyclerView.visibility = View.GONE
                 } else {
-                    // Pass the Firestore documents directly to the adapter
+
                     val emptyView = view?.findViewById<TextView>(R.id.empty_view)
                     emptyView?.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
@@ -117,13 +114,7 @@ class TransactionFragment : Fragment() {
         }
     }
 
-    fun getCurrentLocalDateTime(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        sdf.timeZone = TimeZone.getDefault() // Device's current timezone
-        return sdf.format(Date()) // Formats current time in local timezone
-    }
 
-    // Adapter that works directly with Firestore QueryDocumentSnapshot
     inner class TransactionsAdapter(private val transactions: QuerySnapshot) :
         RecyclerView.Adapter<TransactionsAdapter.TransactionViewHolder>() {
 
@@ -144,37 +135,29 @@ class TransactionFragment : Fragment() {
                 if (position >= 0 && position < transactions.documents.size) {
                     val document = transactions.documents[position]
                     if (document != null) {
-                        // Extract data directly from the Firestore document
                         val amount = document.getDouble("amount")?.toInt() ?: 0
                         val type = document.getString("type") ?: "Unknown"
                         val description = document.getString("description") ?: ""
-                        
-                        // Handle timestamp which could be different types
+
                         val formattedDate = try {
-                            // Check if timestamp field exists at all
                             if (document.contains("timestamp")) {
-                                // Try to infer the type of the field
                                 val timestampValue = document.get("timestamp")
                                 
                                 when (timestampValue) {
-                                    // Case 1: It's a Date object
                                     is Date -> {
                                         val outputFormat = SimpleDateFormat("MMM dd, yyyy, HH:mm", Locale.getDefault())
                                         outputFormat.format(timestampValue)
                                     }
-                                    // Case 2: It's a Timestamp object
                                     is com.google.firebase.Timestamp -> {
                                         val date = (timestampValue as com.google.firebase.Timestamp).toDate()
                                         val outputFormat = SimpleDateFormat("MMM dd, yyyy, HH:mm", Locale.getDefault())
                                         outputFormat.format(date)
                                     }
-                                    // Case 3: It's a Long (milliseconds since epoch)
                                     is Long -> {
                                         val date = Date(timestampValue)
                                         val outputFormat = SimpleDateFormat("MMM dd, yyyy, HH:mm", Locale.getDefault())
                                         outputFormat.format(date)
                                     }
-                                    // Case 4: It's a String
                                     is String -> {
                                         try {
                                             val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -182,11 +165,9 @@ class TransactionFragment : Fragment() {
                                             val outputFormat = SimpleDateFormat("MMM dd, yyyy, HH:mm", Locale.getDefault())
                                             outputFormat.format(date)
                                         } catch (e: Exception) {
-                                            // Just return the string if we can't parse it
                                             "Date: $timestampValue"
                                         }
                                     }
-                                    // Case 5: It's some other type we don't handle
                                     else -> {
                                         Log.w("TransactionFragment", 
                                             "Timestamp field exists but in an unknown format: ${timestampValue?.javaClass}")
@@ -194,7 +175,6 @@ class TransactionFragment : Fragment() {
                                     }
                                 }
                             } else {
-                                // Field doesn't exist at all
                                 Log.w("TransactionFragment", "No timestamp field found in document ${document.id}")
                                 "No date"
                             }
@@ -236,7 +216,6 @@ class TransactionFragment : Fragment() {
         }
     }
 
-    // Add this method to fix any incompatible timestamps
     private fun migrateIncorrectTimestamps() {
         if (userId.isEmpty()) return
         
@@ -249,22 +228,18 @@ class TransactionFragment : Fragment() {
                 var migratedCount = 0
                 
                 for (document in documents) {
-                    // Only process documents that need migration
                     if (document.contains("timestamp") && !(document.get("timestamp") is Timestamp)) {
                         try {
                             val timestampValue = document.get("timestamp")
                             var newTimestamp: Timestamp? = null
                             
                             when (timestampValue) {
-                                // Case 1: It's a Date object
                                 is Date -> {
                                     newTimestamp = Timestamp(timestampValue)
                                 }
-                                // Case 2: It's a Long (milliseconds since epoch)
                                 is Long -> {
                                     newTimestamp = Timestamp(Date(timestampValue))
                                 }
-                                // Case 3: It's a String
                                 is String -> {
                                     try {
                                         val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -277,8 +252,7 @@ class TransactionFragment : Fragment() {
                                     }
                                 }
                             }
-                            
-                            // Update the document if we were able to create a valid timestamp
+
                             if (newTimestamp != null) {
                                 document.reference.update("timestamp", newTimestamp)
                                     .addOnSuccessListener {

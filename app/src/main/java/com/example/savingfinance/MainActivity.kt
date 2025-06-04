@@ -23,22 +23,6 @@ class MainActivity : ComponentActivity() {
 
         FirebaseApp.initializeApp(this)
 
-        setContentView(R.layout.activity_signup) // Start with login layout
-    }
-
-    // Existing methods
-    fun openSignupActivity(view: View) {
-        val intent = Intent(this, ActivitySignup::class.java)
-        startActivity(intent)
-    }
-
-    fun openLoginActivity(view: View) {
-        val intent = Intent(this, ActivityLogin::class.java)
-        startActivity(intent)
-    }
-
-    fun openHomeActivity(view: View) {
-        val intent = Intent(this, ActivityHome::class.java)
-        startActivity(intent)
+        setContentView(R.layout.activity_signup)
     }
 }

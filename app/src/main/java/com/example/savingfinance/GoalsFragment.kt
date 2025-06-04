@@ -47,13 +47,12 @@ class GoalsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Fetch the current currency preference whenever the fragment becomes visible
         fetchPreferredCurrency()
     }
 
     private fun fetchPreferredCurrency() {
         if (userId.isEmpty()) {
-            fetchGoals() // Proceed with default $ symbol
+            fetchGoals()
             return
         }
 
@@ -61,16 +60,13 @@ class GoalsFragment : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    // Get the preferred currency or use $ as default
                     currencySymbol = document.getString("preferredCurrency") ?: "$"
                     Log.d("GoalsFragment", "Using currency symbol: $currencySymbol")
                 }
-                // Now that we have the currency, fetch the goals
                 fetchGoals()
             }
             .addOnFailureListener { e ->
                 Log.e("GoalsFragment", "Error fetching currency preference", e)
-                // Continue with default $ symbol
                 fetchGoals()
             }
     }
@@ -83,15 +79,12 @@ class GoalsFragment : Fragment() {
             .get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
-                    // Handle empty collection
                     val emptyView = view?.findViewById<TextView>(R.id.empty_view)
                     emptyView?.visibility = View.VISIBLE
                     recyclerView.visibility = View.GONE
-                    
-                    // If there are no goals, update the main goal display with default values
+
                     (activity as? ActivityHome)?.updateMainGoalDisplay("No goals set yet", 0, 0)
                 } else {
-                    // Sort documents by currentAmount in descending order
                     val sortedDocuments = documents.documents.sortedByDescending { 
                         it.getDouble("currentAmount") ?: 0.0 
                     }
@@ -132,7 +125,6 @@ class GoalsFragment : Fragment() {
         val mainGoalSwitch = view.findViewById<SwitchMaterial>(R.id.mainGoalSwitch)
         val saveButton = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.saveGoalButton)
 
-        // Set current values
         nameInput.setText(currentName)
         amountInput.setText(currentAmount.toString())
         progressInput.setText(currentProgress.toString())
@@ -144,11 +136,9 @@ class GoalsFragment : Fragment() {
             val newProgress = progressInput.text.toString().toIntOrNull() ?: currentProgress
             val isMain = mainGoalSwitch.isChecked
 
-            // If setting as main goal, we need to update all other goals to not be main
             if (isMain) {
                 updateMainGoalInFirestore(goalId, newName, newAmount, newProgress)
             } else {
-                // Just update this goal
                 updateGoalInFirestore(goalId, newName, newAmount, newProgress, isMain)
             }
             
@@ -160,20 +150,16 @@ class GoalsFragment : Fragment() {
     }
     
     private fun updateMainGoalInFirestore(goalId: String, name: String, amount: Int, progress: Int) {
-        // Start a batch write
         val batch = firestore.batch()
         val userGoalsRef = firestore.collection("users").document(userId).collection("goals")
-        
-        // First get all goals to find any that are currently marked as main
+
         userGoalsRef.get().addOnSuccessListener { documents ->
-            // For each goal that is not this one but is marked as main, update it to not be main
             for (doc in documents) {
                 if (doc.id != goalId && doc.getBoolean("isMainGoal") == true) {
                     batch.update(doc.reference, "isMainGoal", false)
                 }
             }
-            
-            // Update this goal to be the main goal
+
             val goalRef = userGoalsRef.document(goalId)
             batch.update(goalRef, mapOf(
                 "name" to name,
@@ -181,11 +167,10 @@ class GoalsFragment : Fragment() {
                 "currentAmount" to progress,
                 "isMainGoal" to true
             ))
-            
-            // Commit the batch
+
             batch.commit().addOnSuccessListener {
                 Toast.makeText(context, "Goal updated and set as main goal", Toast.LENGTH_SHORT).show()
-                fetchGoals() // Refresh the goals list
+                fetchGoals()
             }.addOnFailureListener { e ->
                 Log.e("GoalsFragment", "Error updating goals batch", e)
                 Toast.makeText(context, "Failed to update goal", Toast.LENGTH_SHORT).show()
@@ -204,7 +189,7 @@ class GoalsFragment : Fragment() {
             ))
             .addOnSuccessListener {
                 Toast.makeText(context, "Goal updated successfully", Toast.LENGTH_SHORT).show()
-                fetchGoals() // Refresh the goals list
+                fetchGoals()
             }
             .addOnFailureListener { e ->
                 Log.e("GoalsFragment", "Error updating goal", e)
@@ -218,7 +203,7 @@ class GoalsFragment : Fragment() {
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(context, "Goal deleted successfully", Toast.LENGTH_SHORT).show()
-                fetchGoals() // Refresh the goals list
+                fetchGoals()
             }
             .addOnFailureListener { e ->
                 Log.e("GoalsFragment", "Error deleting goal", e)
@@ -236,7 +221,6 @@ class GoalsFragment : Fragment() {
         }
     }
 
-    // Update the adapter to take a list of documents instead of QuerySnapshot
     inner class GoalsAdapter(private val goals: List<com.google.firebase.firestore.DocumentSnapshot>) :
         RecyclerView.Adapter<GoalsAdapter.GoalViewHolder>() {
 
@@ -262,7 +246,6 @@ class GoalsFragment : Fragment() {
             val category = document.getString("name") ?: "Unknown"
             val isMainGoal = document.getBoolean("isMainGoal") ?: false
 
-            // Add star emoji for main goal
             holder.categoryText.text = if (isMainGoal) "⭐ $category" else category
             holder.progressText.text = "$currencySymbol${currentAmount} of $currencySymbol${goalAmount}"
             holder.progressBar.max = goalAmount
@@ -273,7 +256,6 @@ class GoalsFragment : Fragment() {
             }
 
             holder.deleteButton.setOnClickListener {
-                // Show confirmation dialog before deleting
                 androidx.appcompat.app.AlertDialog.Builder(requireContext())
                     .setTitle("Delete Goal")
                     .setMessage("Are you sure you want to delete this goal?")

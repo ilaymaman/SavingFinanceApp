@@ -90,7 +90,6 @@ class AddActivityBottomSheet : BottomSheetDialogFragment() {
         adapter.setDropDownViewResource(R.layout.spinner_item)
         categorySpinner.adapter = adapter
 
-        // Category selection listener
         categorySpinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 when (categories[position]) {
@@ -109,7 +108,6 @@ class AddActivityBottomSheet : BottomSheetDialogFragment() {
             val goalAmount = goalAmountEditText.text.toString().trim().toDoubleOrNull()
             val selectedCategory = categorySpinner.selectedItem.toString()
 
-            // Validate inputs
             if (goalName.isEmpty()) {
                 goalNameEditText.error = "Name cannot be empty"
                 return@setOnClickListener
@@ -120,14 +118,12 @@ class AddActivityBottomSheet : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-            // Check user authentication
             val userId = auth.currentUser?.uid
             if (userId == null) {
                 Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Create a proper timestamp
             val timestamp = createTimestamp()
 
             val data = when (selectedCategory) {
@@ -145,17 +141,14 @@ class AddActivityBottomSheet : BottomSheetDialogFragment() {
                 )
             }
 
-            // Determine collection based on category
             val collection = if (selectedCategory == "Transaction") "transactions" else "goals"
 
-            // Add to Firestore
             firestore.collection("users")
                 .document(userId)
                 .collection(collection)
                 .add(data)
                 .addOnSuccessListener {
                     Toast.makeText(requireContext(), "$selectedCategory added successfully", Toast.LENGTH_SHORT).show()
-                    // Refresh the appropriate fragment based on the category
                     val activity = requireActivity() as ActivityHome
                     when (selectedCategory) {
                         "Transaction" -> activity.loadFragment(TransactionFragment.newInstance(userId))
